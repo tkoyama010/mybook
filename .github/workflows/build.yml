@@ -14,5 +14,5 @@ jobs:
       run: rake pdf
     - uses: actions/upload-artifact@master
       with:
-        name: build-pdf
-        path: build.pdf
+        name: mybook-pdf
+        path: mybook.pdf
