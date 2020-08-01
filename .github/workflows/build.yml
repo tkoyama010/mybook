@@ -1,0 +1,18 @@
+name: CI
+
+on: [pull_request]
+
+jobs:
+  build:
+    name: build review pdf
+    runs-on: ubuntu-latest
+    container: docker://kauplan/review2.5
+
+    steps:
+    - uses: actions/checkout@master
+    - name: build pdf
+      run: rake pdf
+    - uses: actions/upload-artifact@master
+      with:
+        name: build-pdf
+        path: build.pdf
