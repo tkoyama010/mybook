@@ -1,23 +1,23 @@
-= インストール
+= 基本とインストール
 
 //abstract{
-Re:VIEW Starterを使っていただき、ありがとうございます。
+まずは手元のパソコンで実装ができるような環境を整えていきましょう。
 
-この章では、Re:VIEW Starterを使うために必要となる「Ruby」と「TeXLive」のインストール方法を説明します。
+この章では、Pythonの有限要素法実装のために必要となる「GetFEM」と「PyVista」のインストール方法を説明します。
 //}
 
 #@#//makechaptitlepage[toc=on]
 
 
 
-== RubyとTeXLiveのインストール
+== GetFEMとPyVistaのインストール
 
-Re:VIEW StarterでPDFを生成するには、RubyとTeXLiveのインストールが必要です。
+Pythonで有限要素法の実装をするには、GetFEMとPyVistaのインストールが必要です。
 
- * Rubyとは世界中で人気のあるプログラミング言語のことです。
-   原稿ファイル（「@<file>{*.re}」ファイル）を読み込むのに必要です。
- * TeXLiveとは有名な組版ソフトのひとつです。
-   PDFファイルを生成するのに必要です。
+ * GetFEMとは有限要素法コードを実装するためのフレームワークのひとつです。
+   有限要素法のモデルを解くのに必要です。
+ * PyVistaとは3次元可視化フレームワークのひとつです。
+   GetFEMの結果を可視化するのに必要です。
 
 これらのインストール手順を説明します。
 
@@ -27,132 +27,51 @@ Re:VIEW StarterでPDFを生成するには、RubyとTeXLiveのインストール
 Dockerとは、簡単に言えば「WindowsやMacでLinuxコマンドを実行するためのソフトウェア」です@<fn>{guoes}。
 //footnote[guoes][Dockerについてのこの説明は、技術的にはちっとも正確ではありません。しかしITエンジニア以外に説明するには、このような説明で充分です。]
 
-Dockerの使い方が分かる人は、@<href>{https://hub.docker.com/r/kauplan/review2.5/, kauplan/review2.5}のDockerイメージを使ってください。
-これでRubyとTeXLiveの両方が使えるようになります。
+Dockerの使い方が分かる人は、@<href>{https://hub.docker.com/r/getfemdoc/getfem/, getfemdoc/getfem}のDockerイメージを使ってください。
+これでGetFEMとPyVistaの両方が使えるようになります。
 
 //terminal[][Dockerイメージのダウンロードと動作確認]{
-$ @<userinput>{docker pull kauplan/review2.5}   @<balloon>{3GB 以上ダウンロードするので注意}
-$ @<userinput>{docker run --rm kauplan/review2.5 ruby --version}
-ruby 2.5.1p57 (2018-03-29 revision 63029) [x86_64-linux-gnu]
-$ @<userinput>{docker run --rm kauplan/review2.5 uplatex --version}
-e-upTeX 3.14159265-p3.7.1-u1.22-161114-2.6 (utf8.uptex) (TeX Live 2017/Debian)
-...(省略)...
+$ @<userinput>{docker pull getfemdoc/getfem}
 //}
-
 
 === macOSを使っている場合
 
-macOSにおいて、RubyとTeXLiveをインストールする方法を説明します。
+macOSにおいて、GetFEMとPyVistaをインストールする方法を説明します。
 
-==== Rubyのインストール
+==== GetFEMのインストール
 
-macOSには最初からRubyがインストールされているため、Rubyを別途インストールする必要はありません。
-
-Rubyがインストールされていることを確認するために、Terminal.app@<fn>{zp54n}を起動して以下のコマンドを入力してみましょう。
-なお各行の先頭にある「@<code>{$ }」は入力せず、下線がついている部分のコマンドを入力してください。
-//footnote[zp54n][Terminal.appは、ファインダで「アプリケーション」フォルダ > 「ユーティリティ」フォルダ > 「ターミナル」をダブルクリックすると起動できます。]
-
-//terminal[][Rubyがインストールされていることを確認]{
-$ @<userinput>{which ruby}     @<balloon>{下線が引かれたコマンドだけを入力すること}
-/usr/bin/ruby    @<balloon>{このような表示になるはず}
-$ @<userinput>{ruby --version} @<balloon>{下線が引かれたコマンドだけを入力すること}
-ruby 2.3.7p456 (2018-03-28 revision 63024) [universal.x86_64-darwin18]
-//}
-
-実際の出力結果は上と少し違うはずですが、だいたい合っていればOKです。
-
-また、必要なライブラリをインストールするために、以下のコマンドも実行してください（各行の先頭にある「@<code>{$ }」は入力せず、それ以降のコマンドを入力してください）。
-
-//terminal[][必要なライブラリをインストール]{
-$ @<userinput>{gem install review --version=2.5}
-$ @<userinput>{review version}
-2.5.0   @<balloon>{必ず「2.5.0」であること（より新しいバージョンは未サポート）}
-//}
-
-==== MacTeXのインストール
-
-次に、MacTeXをダウンロードします。MacTeXとは、macOS用のTeXLiveです。
-MacTeXはサイズが大きい（約4GB）ので、本家ではなく以下のミラーサイトのどれかを使ってください。
-
- * @<href>{http://ftp.jaist.ac.jp/pub/CTAN/systems/mac/mactex/}@<br>{}
-   > @<file>{mactex-20200407.pkg}
- * @<href>{http://ftp.kddilabs.jp/pub/ctan/systems/mac/mactex/}@<br>{}
-   > @<file>{mactex-20200407.pkg}
- * @<href>{http://ftp.riken.go.jp/pub/CTAN/systems/mac/mactex/}@<br>{}
-   > @<file>{mactex-20200407.pkg}
-
-ダウンロードができたら、ダブルクリックしてインストールしてください。
-
-インストールしたら、Terminal.appで次のコマンドを入力し、動作を確認してください（各行の先頭にある「@<code>{$ }」は入力せず、それ以降のコマンドを入力してください）。
-
-//terminal[][MacTeXのインストールができたことを確認]{
-$ @<userinput>{which uplatex}     @<balloon>{下線が引かれたコマンドだけを入力すること}
-/Library/TeX/texbin/uplatex
-$ @<userinput>{uplatex --version} @<balloon>{下線が引かれたコマンドだけを入力すること}
-e-upTeX 3.14159265-p3.8.1-u1.23-180226-2.6 (utf8.uptex) (TeX Live 2020)
-...（省略）...
-//}
-
-実際の出力結果は上と少し違うはずですが、だいたい合っていればOKです。
-
-最後に、MacTeXでヒラギノフォントを使うための準備が必要です（これをしないと、PDFファイルの日本語フォントが見るに耐えません）。
-そのためには、以下のページから「Bibunsho7-patch-1.5-20200511.dmg」@<fn>{873gn}をダウンロードしてください。
-//footnote[873gn][日付が最新のものを選んでください。2020年6月時点では「20200511」が最新です。]
-
- * @<href>{https://github.com/munepi/bibunsho7-patch/releases}
-
-ダウンロードしたらダブルクリックして解凍し、「Patch.app」をダブルクリックしてください。
-
+==== PyVistaのインストール
 
 === Windowsを使っている場合
 
-Windowsにおいて、RubyとTeXLiveをインストールする方法を説明します。
+Windowsにおいて、GetFEMとPyVistaをインストールする方法を説明します。
 
-==== Rubyのインストール
+==== GetFEMのインストール
 
-以下のページにアクセスし、「Ruby+Devkit 2.6.6-1 (x64)」をダウンロードしてインストールしてください。
+==== PyVistaのインストール
 
- * @<href>{https://rubyinstaller.org/downloads/}
+=== Linuxを使っている場合
 
-インストールしたら、コマンドプロンプトで以下のコマンドを入力し、Rubyが実行できることを確かめてください。
+Linuxにおいて、GetFEMとPyVistaをインストールする方法を説明します。
 
-//terminal[][Rubyが実行できることを確認]{
-C:\Users\yourname> @<userinput>{ruby --version}  @<balloon>{「ruby --version」だけを入力}
-ruby 2.6.6-1 [x64-mingw32]
+==== GetFEMのインストール
+
+LinuxがDebianおよびUbuntuディストリビューションの場合、公式リポジトリからインストールすることができます。
+以下のコマンドでインストールを行います。
+//terminal[][apt-getコマンドによるインストール]{
+$ @<userinput>{sudo apt-get install python3-getfem++}     @<balloon>{下線が引かれたコマンドだけを入力すること}
 //}
 
-実際の出力結果は上と少し違うと思いますが、だいたい合っていればOKです。
+==== PyVistaのインストール
 
-また以下のコマンドを実行し、必要なライブラリをインストールします。
-
-//terminal[][必要なライブラリをインストール]{
-C:\Users\yourname> @<userinput>{gem install review --version=2.5}
-C:\Users\yourname> @<userinput>{review version}
-2.5.0   @<balloon>{必ず「2.5.0」であること（より新しいバージョンは未サポート）}
+以下のように、pipコマンドを入力するとPyVistaをインストールすることができます。
+//terminal[][pipコマンドによるインストール]{
+$ @<userinput>{pip install pyvista}     @<balloon>{下線が引かれたコマンドだけを入力すること}
 //}
 
-==== TeXLiveのインストール
+== サンプルファイルの実行
 
-次に、Windows用のTeXLiveをインストールします。詳しくはこちらのページを参照してください。
-このうち、手順(16)において右上の「すべて」ボタンを押してください（つまりすべてのパッケージを選ぶ）。
-
- * 「TeXLive2020をインストールしてLaTeXを始める」
-   @<br>{}@<href>{https://tm23forest.com/contents/texlive2020-install-latex-begin}
-
-インストールできたら、コマンドプロンプトで以下のコマンドを実行してみてください。
-
-//terminal[][コマンドが実行できることを確認]{
-C:\Users\yourname> @<userinput>{uplatex --version} @<balloon>{「uplatex --version」だけを入力}
-e-upTeX 3.14159265-p3.7.1-u1.22-161114-2.6 (utf8.uptex) (TeX Live 2020/W32TeX)
-...（以下省略）...
-//}
-
-実際の出力結果は上と少し違うと思いますが、だいたい合っていればOKです。
-
-
-== プロジェクトを作成
-
-RubyとTeXLiveをインストールしたら、次に本を作るための「プロジェクト」を作成しましょう。
+GetFEMとPyVistaをインストールしたら、次に本を作るための「プロジェクト」を作成しましょう。
 
 以下のWebサイトにアクセスしてください。
 
@@ -180,7 +99,7 @@ $ @<userinput>{ls *.pdf}                   @<balloon>{PDFファイルが生成�
 mybook.pdf
 //}
 
-これでPDFファイルが生成されるはずです。生成できなかった場合は、Twitterで「@<em>{#reviewstarter}」タグをつけて質問してください（相手先不要）。
+これでPDFファイルが生成されるはずです。生成できなかった場合は、Twitterで「@<em>{#GetFEM}」タグをつけて質問してください（相手先不要）。
 
 Dockerを使ってPDFファイルが作成できることを確認したら、このあとはdockerコマンドを使わずとも「@<code>{rake docker:pdf}」だけでPDFファイルが生成できます。
 
@@ -259,6 +178,24 @@ C:\Users\yourname\mybook> @<userinput>{dir *.pdf} @<balloon>{PDFファイルが�
 //}
 
 これでPDFファイルが生成されるはずです。生成できなかった場合は、Twitterで「@<em>{#reviewstarter}」タグをつけて質問してください（相手先不要）。
+
+
+=== Dockerの使い方を知っている場合
+
+Dockerとは、簡単に言えば「WindowsやMacでLinuxコマンドを実行するためのソフトウェア」です@<fn>{guoes}。
+//footnote[guoes][Dockerについてのこの説明は、技術的にはちっとも正確ではありません。しかしITエンジニア以外に説明するには、このような説明で充分です。]
+
+Dockerの使い方が分かる人は、@<href>{https://hub.docker.com/r/kauplan/review2.5/, kauplan/review2.5}のDockerイメージを使ってください。
+これでRubyとTeXLiveの両方が使えるようになります。
+
+//terminal[][Dockerイメージのダウンロードと動作確認]{
+$ @<userinput>{docker pull kauplan/review2.5}   @<balloon>{3GB 以上ダウンロードするので注意}
+$ @<userinput>{docker run --rm kauplan/review2.5 ruby --version}
+ruby 2.5.1p57 (2018-03-29 revision 63029) [x86_64-linux-gnu]
+$ @<userinput>{docker run --rm kauplan/review2.5 uplatex --version}
+e-upTeX 3.14159265-p3.7.1-u1.22-161114-2.6 (utf8.uptex) (TeX Live 2017/Debian)
+...(省略)...
+//}
 
 
 == 注意点
