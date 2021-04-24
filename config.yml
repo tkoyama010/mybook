@@ -26,7 +26,8 @@ language: ja
 # 読みを入れる例 booktitle: {name: "Re:VIEW EPUBサンプル", file-as: "リビューイーパブサンプル"}
 # （タイトルやサブタイトルが長い場合は、好みの箇所に改行を入れてください。）
 booktitle: |-
-  Pythonによる有限要素法実装ハンドブック
+  Pythonによる有限要素法
+  実装ハンドブック
 subtitle: |-
   
 
