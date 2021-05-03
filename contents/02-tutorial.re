@@ -71,8 +71,8 @@ GetFEMを実行する際の手順について説明します。
 @<em>{GetFEM}では@<em>{numpy}もよく使われるのでインポートしておきます。
 
 //list[][モジュールインポート][lang=python]{
-import getfem as gf
-import numpy as np
+>>> import getfem as gf
+>>> import numpy as np
 //}
 
 
@@ -81,11 +81,11 @@ import numpy as np
 @<em>{Mesh}オブジェクトを作ります。
 今回はX方向20.0 mm、Y方向300.0 mm、Z方向20.0 mmの3次元はりのメッシュを作成します。
 
-//list[][モジュールインポート][lang=python]{
-X = np.arange(0.0, 20.0, 2.0)
-Y = np.arange(0.0, 300.0, 2.0)
-Z = np.arange(0.0, 20.0, 2.0)
-mesh = gf.Mesh("cartesian", X, Y, Z)
+//list[][Meshオブジェクトの作成][lang=python]{
+>>> X = np.arange(0.0, 20.0, 2.0)
+>>> Y = np.arange(0.0, 300.0, 2.0)
+>>> Z = np.arange(0.0, 20.0, 2.0)
+>>> mesh = gf.Mesh("cartesian", X, Y, Z)
 //}
 
 
