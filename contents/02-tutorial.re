@@ -177,6 +177,13 @@ END MESH_FEM
 
 また、その他の有限要素法には次のものがあります。
 
+//table[tbl-31][サンプル表]{
+Name	Val1	Val2
+--------------------
+AA	12	34
+BB	56	78
+//}
+
 //}
 
 ここまでが、@<em>{Mesh}オブジェクトと@<em>{Fem}オブジェクトから@<em>{MeshFem}オブジェクトを作成する方法でした。
@@ -184,6 +191,19 @@ END MESH_FEM
 
 
 === @<em>{MeshIm}オブジェクトを作成する
+
+@<em>{MeshIm}オブジェクトを作成します。
+まずは@<href>{https://getfem.readthedocs.io/ja/latest/python/cmdref_MeshIm.html, 公式サイト}に載っている@<em>{MeshIm}オブジェクトの定義から見ていきましょう。
+公式サイトには「このオブジェクトは，メッシュ全体で定義された積分法を表します」と書かれています。
+@<em>{GetFEM}の特徴で説明した通りこのライブラリは@<em>{Mesh}オブジェクトと@<em>{Integ}(積分法)オブジェクトが完全に分離されています。
+そのため、2つのオブジェクトの対応関係を管理するオブジェクトが必要になります。
+それがこのオブジェクトです。
+ここでは、積分点が1点のGauss積分法を定義して@<em>{MeshIm}オブジェクトを作成します。
+
+//list[][MeshImオブジェクトの作成][lang=python]{
+>>> im = gf.Integ("IM_GAUSS1D(1)")
+>>> mim = gf.MeshIm(mesh, im)
+//}
 
 //note[積分法の種類について]{
 
