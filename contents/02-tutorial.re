@@ -120,6 +120,92 @@ END MESH STRUCTURE DESCRIPTION
 出力結果からインデックス0の点が0.0にあり、インデックス1の点が10.0の位置にあることが分かります。
 また、点0と点1に接続された凸(convex)が定義されていることが分かります。
 
+=== @<em>{Mesh}オブジェクトの面を取得する
+
+@<em>{Mesh}には@<em>{Model}オブジェクトのブリック(brick)を定義するために領域を定義する必要があります。
+今回は左端と右端に領域を定義しておきます。
+領域の定義には面番号が必要となるので取得します。
+面を取得するためには@<em>{outer_faces_with_direction}メソッドを使用します。
+このメソッドはベクトルとベクトルからの角度(rad)を指定してその範囲のベクトルを法線とする面を取得します。
+
+//list[][左端の面の取得][lang=python]{
+>>> fb1 = mesh.outer_faces_with_direction([-1.0], 0.01)
+>>> print(fb1)
+
+[[0]
+ [1]]
+
+//}
+
+出力を見ると面番号は2行の配列で構成されています。
+1行目は凸(convex)のIDを、2行目は凸(convex)内の面番号を表しています。
+つまり、上の出力はIDが0の凸(convex)の面番号1を指定していることが分かります。
+左端と同様に右端の面番号も取得します。
+
+//list[][右端の面の取得][lang=python]{
+>>> fb2 = mesh.outer_faces_with_direction([1.0], 0.01)
+>>> print(fb2)
+
+[[0]
+ [0]]
+
+//}
+
+領域を指定して領域を定義することも可能です。
+@<em>{outer_faces_with_direction}は2つの点で定義されるBOX内にある面を取得します。
+@<m>$x = -1.0$から@<m>$x = 11.0$の範囲にある点を出力してみます。
+
+//list[][BOX内の面の取得][lang=python]{
+>>> print(mesh.outer_faces_in_box([-1.0], [11.0]))
+
+[[0 0]
+ [0 1]]
+
+
+//}
+
+この範囲にはメッシュの全ての面(2個)が含まれています。
+この面は使用しないため変数には保存しません。
+
+=== @<em>{Mesh}オブジェクトの領域を設定する
+
+取得した面をもとに領域を設定します。
+@<em>{set_region}メソッドを使用して領域を設定します。
+//list[][領域の設定][lang=python]{
+>>> LEFT = 1
+>>> RIGHT = 2
+>>> mesh.set_region(RIGHT, fb1)
+>>> mesh.set_region(LEFT, fb2)
+>>> print(mesh)
+
+BEGIN POINTS LIST
+
+  POINT COUNT 2
+  POINT  0  0
+  POINT  1  10
+
+END POINTS LIST
+
+
+
+BEGIN MESH STRUCTURE DESCRIPTION
+
+CONVEX COUNT 1
+CONVEX 0    'GT_PK(1,1)'      0  1
+
+END MESH STRUCTURE DESCRIPTION
+BEGIN REGION 1
+0/0
+END REGION 1
+BEGIN REGION 2
+0/1
+END REGION 2
+
+//}
+
+@<em>{Mesh}オブジェクトに領域(@<em>{REGION})が追加されていることが分かります。
+「凸(convex)/面番号」の表記となっていることに注意してください。
+
 
 === @<em>{MeshFem}オブジェクトを作成する
 
@@ -261,6 +347,16 @@ BB	56	78
 >>> md.add_isotropic_linearized_elasticity_brick(mim, "u", "clambda", "cmu")
 //}
 
+次に、Dirichlet条件(固定条件)を追加します。
+左端に追加をします。
+
+//list[][Dirichlet条件(固定条件)の追加][lang=python]{
+//}
+
+最後にソース項(荷重条件)を追加します。
+
+//list[][ソース項(荷重条件)の追加][lang=python]{
+//}
 
 ==={subsec-compileerror} コンパイルエラーになったら
 
