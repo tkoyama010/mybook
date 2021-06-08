@@ -325,7 +325,7 @@ BB	56	78
 メソッドは@<em>{add_fem_variable}を使用します。
 
 //list[][変数の定義][lang=python]{
->>> md.add_fem_variable("u", mf_u)
+>>> md.add_fem_variable("u", mfu)
 //}
 
 ===== (3) ブリック(brick)を定義する。
@@ -339,23 +339,44 @@ BB	56	78
  * Dirichlet条件(固定条件)
  * ソース項(荷重条件)
 
-まずは、等方性線形弾性項を追加します。
+まずは、楕円項を追加します。
 
-//list[][等方性線形弾性項の追加][lang=python]{
->>> md.add_initialized_scalar_data("clambda", clambda)
->>> md.add_initialized_scalar_data("cmu", cmu)
->>> md.add_isotropic_linearized_elasticity_brick(mim, "u", "clambda", "cmu")
+//list[][楕円項の追加][lang=python]{
+>>> md.add_initialized_data("cmu", [cmu])
+>>> md.add_generic_elliptic_brick(mim, "u", "cmu")
+0
 //}
 
+出力された0はブリック(brick)のインデックスを表しています。
+
 次に、Dirichlet条件(固定条件)を追加します。
-左端に追加をします。
+Dirichlet条件は以下の式で表されます。
+//texequation[][Dirichlet条件]{
+Hu = r
+//}
+ここで、@<m>$H$は(自由度)を次元とした行列、@<m>$u$と@<m>$r$はそれぞれ(自由度)を次元としたベクトルです。
+@<m>$u$は先程定義した変数を表しています。
+今回は左端が固定条件となっているため@<m>$u = {0}$を設定します。
+ゆえに、@<m>$H = [[0]]$および@<m>$r = {0}$となります。
+@<m>$H$と@<m>$r$は@<em>{add_initialized_data}メソッドを使用して固定サイズデータとして定義します。
+それぞれ@<em>{"H"}と@<em>{"r"}と名前をつけておき、@<em>{add_generalized_Dirichlet_condition_with_multipliers}メソッドでDirichlet条件を定義します。
+引数には@<em>{MeshIm}オブジェクトと@<em>{MeshFem}オブジェクトも必要です。
 
 //list[][Dirichlet条件(固定条件)の追加][lang=python]{
+>>> md.add_initialized_data("H", [[1.0]])
+>>> md.add_initialized_data("r", [0.0])
+>>> md.add_generalized_Dirichlet_condition_with_multipliers(
+...     mim, "u", mfu, LEFT, "r", "H"
+... )
+1
 //}
 
 最後にソース項(荷重条件)を追加します。
+使用するメソッドは
 
 //list[][ソース項(荷重条件)の追加][lang=python]{
+>>> md.add_initialized_data("F", [1.0])
+>>> md.add_source_term_brick(mim, "u", "F", RIGHT)
 //}
 
 ==={subsec-compileerror} コンパイルエラーになったら
