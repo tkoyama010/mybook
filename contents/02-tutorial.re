@@ -171,11 +171,12 @@ END MESH STRUCTURE DESCRIPTION
 
 取得した面をもとに領域を設定します。
 @<em>{set_region}メソッドを使用して領域を設定します。
+領域IDを設定する必要があるため変数@<em>{LEFT}と@<em>{RIGHT}に番号を定義しておきます。
 //list[][領域の設定][lang=python]{
 >>> LEFT = 1
 >>> RIGHT = 2
->>> mesh.set_region(RIGHT, fb1)
->>> mesh.set_region(LEFT, fb2)
+>>> mesh.set_region(LEFT, fb1)
+>>> mesh.set_region(RIGHT, fb2)
 >>> print(mesh)
 
 BEGIN POINTS LIST
@@ -195,10 +196,10 @@ CONVEX 0    'GT_PK(1,1)'      0  1
 
 END MESH STRUCTURE DESCRIPTION
 BEGIN REGION 1
-0/0
+0/1
 END REGION 1
 BEGIN REGION 2
-0/1
+0/0
 END REGION 2
 
 //}
@@ -218,14 +219,15 @@ END REGION 2
 
 @<em>{Mesh}オブジェクトを元に@<em>{MeshFem}オブジェクトを作っていきます。
 作成の際には、@<em>{Mesh}オブジェクトと求めたい物理量の次元を与えます。
-スカラーの場合は1、ベクトルの場合はそのベクトルの次元(1, 2, 3...)を与えます。
+スカラーの場合は1、ベクトルの場合はそのベクトルの自由度(1, 2, 3...)を与えます。
+今回は1自由度のベクトルを定義します。
 
 //list[][@<em>{MeshFem}オブジェクトの作成][lang=python]{
->>> mfu = gf.MeshFem(mesh, 2)
+>>> mfu = gf.MeshFem(mesh, 1)
 >>> print(mfu)
 BEGIN MESH_FEM
 
-QDIM 2
+QDIM 1
  BEGIN DOF_ENUMERATION
  END DOF_ENUMERATION
 END MESH_FEM
@@ -241,14 +243,16 @@ END MESH_FEM
 >>> f = gf.Fem("FEM_PK(1,1)")
 >>> mfu.set_fem(f)
 >>> print(mfu)
+
 BEGIN MESH_FEM
 
-QDIM 2
- CONVEX 0 'FEM_PK(1,1)'
- BEGIN DOF_ENUMERATION
-  0:  0 2
+QDIM 1
+CONVEX 0 'FEM_PK(1,1)'
+BEGIN DOF_ENUMERATION
+ 0:  0 1
  END DOF_ENUMERATION
 END MESH_FEM
+
 //}
 
 //note[有限要素法の種類について]{
@@ -342,8 +346,9 @@ BB	56	78
 まずは、楕円項を追加します。
 
 //list[][楕円項の追加][lang=python]{
->>> md.add_initialized_data("cmu", [cmu])
->>> md.add_generic_elliptic_brick(mim, "u", "cmu")
+>>> k = 2.0
+>>> md.add_initialized_data("k", [k])
+>>> md.add_generic_elliptic_brick(mim, "u", "k")
 0
 //}
 
@@ -351,13 +356,13 @@ BB	56	78
 
 次に、Dirichlet条件(固定条件)を追加します。
 Dirichlet条件は以下の式で表されます。
-//texequation[][Dirichlet条件]{
+//texequation[dirichlet][Dirichlet条件]{
 Hu = r
 //}
 ここで、@<m>$H$は(自由度)を次元とした行列、@<m>$u$と@<m>$r$はそれぞれ(自由度)を次元としたベクトルです。
 @<m>$u$は先程定義した変数を表しています。
 今回は左端が固定条件となっているため@<m>$u = {0}$を設定します。
-ゆえに、@<m>$H = [[0]]$および@<m>$r = {0}$となります。
+ゆえに、@<m>$H = [[0]]$および@<m>$r = \{0\}$となります。
 @<m>$H$と@<m>$r$は@<em>{add_initialized_data}メソッドを使用して固定サイズデータとして定義します。
 それぞれ@<em>{"H"}と@<em>{"r"}と名前をつけておき、@<em>{add_generalized_Dirichlet_condition_with_multipliers}メソッドでDirichlet条件を定義します。
 引数には@<em>{MeshIm}オブジェクトと@<em>{MeshFem}オブジェクトも必要です。
@@ -371,32 +376,88 @@ Hu = r
 1
 //}
 
+出力された1はブリック(brick)のインデックスを表しています。
+
 最後にソース項(荷重条件)を追加します。
-使用するメソッドは
+使用するメソッドは@<em>{add_source_term_brick}メソッドを使用して荷重条件を追加します。
+荷重条件をベクトル@<m>$F = \{1.0\}$で設定します。
 
 //list[][ソース項(荷重条件)の追加][lang=python]{
->>> md.add_initialized_data("F", [1.0])
+>>> F = mfu.eval("1.0")
+>>> md.add_initialized_fem_data("F", mfu, F)
 >>> md.add_source_term_brick(mim, "u", "F", RIGHT)
+Trace 2 in getfem_models.cc, line 4387: Mass term assembly for Dirichlet condition
+Trace 2 in getfem_models.cc, line 4424: Source term assembly for Dirichlet condition
+2
 //}
 
-==={subsec-compileerror} コンパイルエラーになったら
-
-PDFオブジェクトを生成するときにエラーになったら、以下の点を確認してください。
-
- * インライン命令がきちんと閉じているか
- * ブロック命令の引数が足りているか、多すぎないか
- * 「@<code>|//}|」が足りてないか、または多すぎないか
- * 「@<code>|@@<nop>{}<fn>{}|」や「@<code>|@@<nop>{}<img>{}|」や「@<code>|@@<nop>{}<table>{}|」のラベルが合っているか
- * 「@<code>|@@<nop>{}<chapref>{}|」で指定した章IDが合っているか
- * 「@<code>|@@<nop>{}<secref>{}|」で指定した節や項が存在するか
- * 脚注の中で「@<code>{]}」を「@<code>{\]}」とエスケープしているか
- * 「@<code>|//image|」で指定した画像オブジェクトが存在するか
- * 原稿オブジェクト名を間違っていないか
- * 原稿オブジェクトの文字コードがUTF-8になっているか
-
-詳しくは@<secref>{05-faq|sec-compileerror}を見てください。
+ソース項はアセンブリングが必要となるためその情報が出力されます。
+2はブリック(brick)のインデックスを表しています。
 
 
+=== 求解
+
+モデルを定義したら、@<em>{solve}メソッドを使用して解くことができます。
+//list[][求解][lang=python]{
+>>> md.solve()
+Trace 2 in getfem_models.cc, line 3464: Generic elliptic: generic matrix assembly
+Trace 2 in getfem_models.cc, line 4387: Mass term assembly for Dirichlet condition
+Trace 2 in getfem_models.cc, line 4424: Source term assembly for Dirichlet condition
+Trace 2 in getfem_models.cc, line 3300: Generic source term assembly
+Trace 2 in getfem_models.cc, line 3307: Source term: generic source term assembly
+(0, 1)
+//}
+各項がアセンブリングされている旨のメッセージが出力されます。@<em>{(0, 1)}はXXXXX。
+
+==={subsec-compileerror} @<em>{solve}がエラーになったら
+
+XXXXエラーになったら、以下の点を確認してください。
+
+ * AAAAA
+ * BBBBB
+ * CCCCC
+
+詳しくはXXXXXを見てください。
+
+== 解のエクスポート
+
+以上で有限要素法が解けました。
+次に、解いた解を可視化する必要があります。
+@<em>{GetFEM}には可視化機能はないため、外部の可視化ライブラリを使用する必要があります。
+今回は@<em>{PyVista}を使用するため@<em>{VTK}ファイルをエクスポートします。
+変数@<em>{u}の値は@<em>{variable}メソッドを使用して出力します。
+//list[][解のエクスポート][lang=python]{
+>>> U = md.variable("u")
+>>> print(U)
+[0. 5.]
+>>> mfu.export_to_vtk("mfu.vtk", "ascii", mfu, U, "U")
+//}
+
+出力後、同じディレクトリにファイル@<em>{"mfu.vtk"}が出力されます。
+//list[][VTKファイルの内容][]{
+# vtk DataFile Version 2.0
+Exported by GetFEM
+ASCII
+DATASET UNSTRUCTURED_GRID
+POINTS 2 float
+ 0 0 0
+ 10 0 0
+
+CELLS 1 3
+ 2 0 1
+
+CELL_TYPES 1
+ 3
+
+POINT_DATA 2
+
+
+SCALARS U float 1
+LOOKUP_TABLE default
+ 0 5
+//}
+VTKの詳しいフォーマットについてはXXXXを参照してください。
+@<m>$x = 10.0$で@<m>$U=5.0$の値となっていることが確認できます。
 
 =={sec-basicsyntax} 基本的な記法
 
