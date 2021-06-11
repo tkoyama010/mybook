@@ -73,7 +73,6 @@ GetFEMを実行する際の手順について説明します。
 //list[][モジュールインポート][lang=python]{
 >>> import getfem as gf
 >>> import numpy as np
->>> import pyvista as pv
 //}
 
 
@@ -459,15 +458,51 @@ LOOKUP_TABLE default
 VTKの詳しいフォーマットについてはXXXXを参照してください。
 @<m>$x = 10.0$で@<m>$U=5.0$の値となっていることが確認できます。
 
-=={sec-basicsyntax} 基本的な記法
+=={sec-basicsyntax} @<em>{PyVista}の特徴
 
-原稿オブジェクトは、ある決まった書き方（記法）に従って記述します。
-たとえば、次のような記法があります。
+@<em>{PyVista}は@<em>{numpy}や@<em>{matplotlib}のようなインターフェースを持った3次元データ可視化ライブラリです。
 
- * 章(Chapter)は「@<code>{= }」で始め、節(Section)は「@<code>{== }」で始める。
- * 箇条書きは「@<code>{ * }」で始める。
- * プログラムコードは「@<code>|//list{...//}|」で囲う。
- * 強調は「@<code>|@@<nop>{}<strong>{...}|」または「@<code>|@@<nop>{}<B>{...}|」で囲う。
+=== インポートする
+
+まずは@<em>{PyVista}を使用できるようにモジュールをインポートします。
+慣例として@<em>{PyVista}は@<em>{pv}としてインポートされるので覚えておきましょう。
+//list[][モジュールインポート][lang=python]{
+>>> import pyvista as pv
+//}
+
+=== ファイルを読み込む
+
+ファイルを読み込むには@<em>{pyvista.read}を使用します。
+//list[][モジュールインポート][lang=python]{
+>>> m = pv.read("mfu.vtk")
+>>> print(m)
+UnstructuredGrid (0x7fafd288f400)
+  N Cells:      1
+  N Points:     2
+  X Bounds:     0.000e+00, 1.000e+01
+  Y Bounds:     0.000e+00, 0.000e+00
+  Z Bounds:     0.000e+00, 0.000e+00
+  N Arrays:     1
+//}
+@<em>{m}に2ポイントを持つセルが1個の非構造格子が設定されたことが分かります。
+また、前節で保存したデータ配列"U"が含まれることも確認できます。
+@<em>{0x7fafd288f400}の部分は実行するたびに異なります。
+
+=== 結果の表示
+
+@<em>{plot}メソッドを使用することにより結果を可視化することができます。
+
+//list[][可視化][lang=python]{
+>>> m.plot()
+//}
+
+先程計算した1次元のメッシュの結果が可視化されていることが分かります。
+@<m>$x = 10.0$で@<m>$U=5.0$の値となっていることを確認してください。
+
+//image[mfu][解析結果の表示][scale=1.0]
+
+1次元モデルを使用して@<em>{GetFEM}と@<em>{PyVista}の基礎的な使い方を習得できました。
+次の節では2次元モデルの解析をしてみましょう。
 
 ここでは記法のうち基本的なものを説明します。
 詳しいことは@<chapref>{03-syntax}で説明します。
