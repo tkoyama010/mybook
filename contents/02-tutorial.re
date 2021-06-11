@@ -1,796 +1,268 @@
-= チュートリアル
+= @<em>{GetFEM}と@<em>{PyVista}の基礎
 
 //abstract{
-前の章では、RubyとTeXLiveのインストールを説明し、サンプルPDFファイルを生成しました。
-
-この章では、自分で書いた原稿ファイルからPDFファイルを生成する方法を説明します。
-
-なおこの章は、RubyとTeXLiveのインストールが済んでいること、またサンプルのPDFファイルが生成できたことを前提にしています。
+前の章では、@<em>{GetFEM}と@<em>{PyVista}のインストールを説明し、サンプルのスクリプトを実行しました。
+この章では、自分で書いたスクリプトファイルで解析を実行する方法を説明します。
+なおこの章は、@<em>{GetFEM}と@<em>{PyVista}のインストールが済んでいること、またサンプルのスクリプトが実行できたことを前提にしています。
 まだの人は前の章を見てください。
 //}
 
 #@#//makechaptitlepage[toc=on]
 
-
-
 == 用語の説明
 
 このあとの説明で使用する用語を紹介します。
 
-: Starter
-    Re:VIEW Starterのことです。
-    「Re:VIEW Starter」はちょっと長いので、この文章では省略して「Starter」と呼んでいます。
-: プロジェクトのzipファイル
-    Re:VIEW StarterのWebサイトでプロジェクトを作ったときに、最後にダウンロードされるzipファイルのことです。
-    単に「zipファイル」と呼ぶこともあります。
-: @<file>{mybook.zip}
-    説明で使用するプロジェクトのzipファイル名です。
-    これはサンプルであり、実際にはたとえば「@<file>{samplebook.zip}」だったり「@<file>{brabra-book.zip}」だったりします。
-: プロジェクトのフォルダ
-    zipファイルを解凍したときにできるフォルダです。
-    たとえばzipファイル名が「@<file>{mybook.zip}」なら、解凍してできるフォルダは「@<file>{mybook/}」なので、これがプロジェクトのフォルダになります。
-: 「@<file>{mybook/}」フォルダ
-    プロジェクトのフォルダのことです。
-    フォルダ名はあくまでサンプルであり、プロジェクトごとに異なることに注意してください。
-: 原稿ファイル
-    原稿となるテキストファイルです。
-    これをもとにPDFファイルが生成されます。
-    原稿ファイルは拡張子が「@<file>{.re}」なので、「@<file>{*.re}ファイル」と呼ぶこともあります。
-    なお文字コードは必ずUTF-8にしてください。
-: @<file>{*.re}ファイル
-    原稿ファイルのことです。
-    拡張子が「@<file>{.re}」なので、こう呼ばれることがあります。
-: 「@<file>{contents/}」フォルダ
-    原稿ファイルが置かれているフォルダです。
-    最近のRe:VIEW Starterでは、デフォルトで原稿ファイルを「@<file>{contents/}」フォルダに置くことになっています（以前はプロジェクトのフォルダ直下に置かれていました）。
-: テキストエディタ
-    テキストファイルを作成したり変更するためのアプリケーションのことです。
-    単に「エディタ」と呼ぶこともあります。
-    有名なものだと「Visual Studio Code」「Atom」「Emacs」「Vim」「サクラエディタ」「秀丸」「メモ帳」などがあります。
-: エディタ
-    テキストエディタのことです。
-: コンパイル
-    原稿ファイルからPDFファイルを生成することです。
-    Re:VIEW StarterではPDFだけでなくHTMLやePubのファイルも生成できるので、どの形式を生成するかを明示するなら「PDFへコンパイルする」「ePubへコンパイルする」などと言います。
-
-
-== フォルダとファイルの説明
-
-プロジェクトの「@<file>{mybook.zip}」を解凍すると、数多くのファイルが作られます。
-それらのうち、重要なものを選んで解説します。
-すべてのファイルについての解説は@<chapref>{92-filelist}を参照してください。
-
-#@# : @<file>{Gemfile}
-#@#	@<code>{gem}コマンドが使用します。通常は気にしなくていいです。
-#@# : @<file>{README.md}
-#@#	プロジェクトの説明が書かれたファイルです。
-#@#	ユーザが好きなように上書きすることを想定しています。
-#@# : @<file>{Rakefile}
-#@#	@<code>{rake}コマンドが使用します。
-#@#	コマンドを追加する場合は、このファイルは変更せず、かわりに「@<file>{lib/tasks/*.rake}」を変更してください。
- : @<file>{catalog.yml}
-	原稿ファイルが順番に並べられたファイルです。
-	原稿ファイルを追加した・削除した場合は、このファイルも編集します。
-#@# : @<file>{catalog.yml.orig}
-#@#	Re:VIEWでのオリジナルファイルです。
- : @<file>{config-starter.yml}
-	Starter独自の設定ファイルです。
-	Starterでは「@<file>{cofnig.yml}」と「@<file>{cofnig-starter.yml}」の両方を使います。
- : @<file>{config.yml}
-	Re:VIEWの設定ファイルです。
-	Starterによりいくつか変更と拡張がされています。
-#@# : @<file>{config.yml.orig}
-#@#	Re:VIEWでのオリジナルファイルです。
- : @<file>{contents/}
-	原稿ファイルを置くフォルダです@<fn>{fn-zuxns}。
- : @<file>{contents/*.re}
-	原稿ファイルです。
-	章(Chapter)ごとにファイルが分かれます。
-#@# : @<file>{css/}
-#@#	HTMLファイルで使うCSSファイルを置くフォルダです。
- : @<file>{images/}
-	画像ファイルを置くフォルダです。
-	この下に章(Chapter)ごとのサブフォルダを作ることもできます。
-#@# : @<file>{layouts/layout.epub.erb}
-#@#	原稿ファイルからePubファイルを生成するためのテンプレートです。
-#@# : @<file>{layouts/layout.html5.erb}
-#@#	原稿ファイルからHTMLファイルを生成するためのテンプレートです。
-#@# : @<file>{layouts/layout.tex.erb}
-#@#	原稿ファイルからLaTeXファイルを生成するためのテンプレートです。
-#@# : @<file>{lib/hooks/beforetexcompile.rb}
-#@#	LaTeXファイルをコンパイルする前に編集するスクリプトです。
-#@# : @<file>{lib/ruby/*.rb}
-#@#	StarterによるRe:VIEWの拡張を行うRubyスクリプトです。
-#@# : @<file>{lib/ruby/mytasks.rake}
-#@#	ユーザ独自のRakeコマンドを追加するためのファイルです。
-#@# : @<file>{lib/ruby/review.rake}
-#@#	Re:VIEWで用意されているRakeタスクのファイルです。
-#@#	Starterによって変更や拡張がされています。
-#@# : @<file>{lib/ruby/review.rake.orig}
-#@#	Starterによって変更や拡張がされる前の、オリジナルのタスクファイルです。
-#@# : @<file>{lib/ruby/starter.rake}
-#@#	Starterが追加したRakeタスクが定義されたファイルです。
-#@# : @<file>{locale.yml}
-#@#	国際化用のファイルです。
-#@#	たとえば「リスト1.1」を「プログラム1.1」に変更したい場合は、このファイルを変更します。
-#@# : @<file>{mybook-epub/}
-#@#	ePubファイルを生成するときの中間生成ファイルが置かれるフォルダです。
-#@#	通常は気にする必要はありません。
- : @<file>{mybook-pdf/}
-	PDFファイルを生成するときの中間生成ファイルが置かれるフォルダです。
-	@<LaTeX>{}ファイルをデバッグするときに必要となりますが、通常は気にする必要はありません。
-#@# : @<file>{mybook.epub}
-#@#	生成されたePubファイルです。
-#@#	ファイル名はプロジェクトによって異なります。
- : @<file>{mybook.pdf}
-	生成されたPDFファイルです。
-	ファイル名はプロジェクトによって異なります。
- : @<file>{review-ext.rb}
-	Re:VIEWを拡張するためのファイルです。
-	このファイルから「@<file>{lib/ruby/*.rb}」が読み込まれています。
- : @<file>{sty/}
-	@<LaTeX>{}で使うスタイルファイルが置かれるフォルダです。
-#@# : @<file>{sty/jumoline.sty}
-#@#	@<LaTeX>{}で使うスタイルファイルのひとつです。
-#@# : @<file>{sty/mycolophon.sty}
-#@#	奥付@<fn>{fn-7ypmf}の内容が書かれたスタイルファイルです。
-#@#	奥付を変更したい場合はこのファイルを編集します。
- : @<file>{sty/mystyle.sty}
-	ユーザが独自に@<LaTeX>{}マクロを定義・上書きするためのファイルです。
-	中身は空であり、ユーザが自由に追加して構いません。
- : @<file>{sty/mytextsize.sty}
-	PDFにおける本文の高さと幅を定義したファイルです。
-	@<LaTeX>{}では最初に本文の高さと幅を決める必要があるので、他のスタイルファイルから分離されてコンパイルの最初に読み込めるようになっています。
-#@# : @<file>{sty/mytitlepage.sty}
-#@#	大扉@<fn>{fn-cq9ws}の内容が書かれたスタイルファイルです。
-#@#	大扉のデザインを変更したい場合はこのファイルを編集します。
- : @<file>{sty/starter.sty}
-	Starter独自のスタイルファイルです。
-	ここに書かれた@<LaTeX>{}マクロを変更したい場合は、このファイルを変更するよりも「@<file>{sty/mystyle.sty}」に書いたほうがバージョンアップがしやすくなります。
- : @<file>{sty/starter-headline.sty}
-	章(Chapter)や節(Section)や項(Subsection)の@<LaTeX>{}マクロが定義されたファイルです。
+: @<em>{Model}オブジェクト
+    @<em>{GetFEM}の中心となるオブジェクトです。全体剛性方程式を管理し解析を実行します。
 
+: @<em>{Mesh}オブジェクト
+    メッシュを管理するオブジェクトです。@<em>{GetFEM}は有限要素法の要素の種類と幾何情報が完全に分離されています。
 
-//footnote[fn-zuxns][原稿ファイルを置くフォルダ名は「@<file>{config.yml}」の「@<code>|contentdir: contents|」で変更できます。]
-#@#//footnote[fn-7ypmf][@<em>{奥付}とは、本のタイトルや著者や出版社や版や刷などの情報が書かれたページのことです。通常は本のいちばん最後のページに置かれます。]
-#@#//footnote[fn-cq9ws][@<em>{大扉}とは、タイトルページのことです。表紙のことではありません。]
+: 凸(convex)
+    メッシュを構成する要素です、要素と呼ばれることもありますが、本書では凸(convex)で統一します。
 
+: 点
+    凸(convex)を定義するするために定義される点です。点を複数結ぶことにより凸(convex)となります。
+    節点と呼ばれることもありますが、点で統一します。
 
-== 原稿の追加と変更
+: @<em>{MeshFem}オブジェクト
+    メッシュの有限要素法を管理するオブジェクトです。メッシュの凸(convex)にどの有限要素法を設定するかを管理します。
+    全ての凸(convex)に個別に有限要素法を定義することも可能ですが本書では説明しません。
 
-原稿の追加と変更の方法を説明します。
+: @<em>{MeshIm}オブジェクト
+    メッシュの積分法を管理するオブジェクトです。メッシュの凸(convex)にどの積分法を設定するかを管理します。
+    全ての凸(convex)に個別に積分法を定義することも可能ですが本書では説明しません。
 
-原稿の追加より変更のほうが簡単なので、変更する方法を先に説明します。
+: 弱形式言語(weak form language)
+    微分方程式(PDE)を有限要素法で解析する際は強形式の微分方程式を弱形式に変形をして離散化を行います。
+    @<em>{GetFEM}では弱形式を自動的に離散化する機能を実装しており、その際に使用される言語を弱形式言語(weak form language)と呼称します。
+    本書では弱形式言語を使用する際に弱形式言語の記法について説明します。
 
+: ブリック(brick)
+    ブリック(brick)はModelオブジェクトの全体剛性方程式に追加する項を指します。
+    ブリック(brick)の多くは弱形式言語(weak form language)で記述されており典型的な項は@<em>{Model}オブジェクトのメソッドとして定式化されています。
 
-=== 既存の原稿ファイルを変更する
+== @<em>{GetFEM}の特徴
 
-プロジェクトのフォルダには、サンプルとなる原稿ファイルが存在します。
-まずはこれを変更してみましょう。
+ここでは@<em>{GetFEM}の大きな特徴を2つ紹介します。
 
- - (1) まず、お好みのテキストエディタを使って「@<file>{mybook/contents/00-preface.re}」を開いてください。
- - (2) 次に、先頭の「@<code>{= はじめに}」の下に、何でもいいので適当なテキストを追加して（例：@<list>{6f3fh}）、原稿ファイルを保存してください。
- - (3) 原稿ファイルを保存したら、MacならTerminal.app@<fn>{f90kk}、Windowsならコマンドプロンプトを開き、「@<code>{rake pdf}」（またはDockerを使っているなら「@<code>{rake docker:pdf}」）を実行してください。
+1つ目はメッシュと有限要素法と積分法のオブジェクトが完全に分離されていることです。
+図に示すように@<em>{Mesh}(メッシュ)オブジェクトと@<em>{Fem}(有限要素法)オブジェクトと@<em>{Integ}(積分法)オブジェクトは完全に分離されいます。
+これには利点があります。
+例えば、3種類のメッシュ形状と3種類の有限要素法と3種類の積分法がそれぞれ存在した場合、
+通常の有限要素法プログラムでは全ての組み合わせに対応した@<m>{3 \times 3 \times 3 = 27}種類の要素を個別に開発する必要があります。
+しかし、独立していればそれらのオブジェクトを組み合わせることで実装の手間を省くことができます。
+新しい有限要素法の手法や積分法を追加したいとき、@<em>{Fem}(有限要素法)オブジェクトや@<em>{Integ}(積分法)オブジェクトに追加するだけでよいのです。
 
-//list[6f3fh][原稿ファイルの内容]{
-= はじめに
+2つ目は弱形式言語(weak form language)による自動モデリング機能が実装されていることです。
+有限要素法では微分方程式を弱定式化して離散化します。
+通常の有限要素法プログラムでは弱定式した式を離散化して定式化します。
+@<em>{GetFEM}では弱定式化した式を弱形式言語(weak form language)で入力することにより自動的に離散化が行われます。
 
-@<b>{見ろ、人がゴミのようだ！}       @<balloon>{追加}
+== GetFEMの実行手順
 
-...（以下省略）...
-//}
+GetFEMを実行する際の手順について説明します。
 
-//footnote[f90kk][Terminal.appは、ファインダで「アプリケーション」フォルダ > 「ユーティリティ」フォルダ > 「ターミナル」をダブルクリックすると起動できます。]
+=== インポートする
 
-これで新しいPDFファイルが生成されるはずです。
-生成された新しいPDFファイルを開き、さきほど追加した行が「はじめに」の章に表示されていることを確認してください。
+まずは@<em>{GetFEM}を使用できるようにモジュールをインポートします。
+@<em>{GetFEM}では@<em>{numpy}もよく使われるのでインポートしておきます。
+慣例として@<em>{GetFEM}は@<em>{gf}として、@<em>{Numpy}は@<em>{np}としてインポートされるので覚えておきましょう。
 
-//note[プロジェクトのフォルダに原稿ファイルがあるとコンパイルエラー]{
-
-原稿ファイルを「@<file>{contents/}」に置くよう設定している場合、もし原稿ファイル(@<file>{*.re})がプロジェクトのフォルダ（たとえば「@<file>{mybook/}」の直下）にあると、コンパイル@<fn>{fn-zt1bb}できずエラーになります。
-
-エラーになるのは、Starterの仕組みに起因します。
-Starterではコンパイル時に、「@<file>{contents/}」に置かれた原稿ファイル（@<file>{*.re}）をプロジェクトフォルダの直下にコピーしてからコンパイルします）@<fn>{fn-g6oit}。
-そのため、プロジェクトフォルダ直下に別の原稿ファイルがあるとコンパイル時に上書きしてしまう可能性があるため、あえてエラーにしているのです。
-
-//footnote[fn-zt1bb][@<em>{コンパイル}とは、ここでは原稿ファイルからPDFファイルを生成することを指します。]
-//footnote[fn-g6oit][Re:VIEW 2.5の仕様上、コンパイル時に原稿ファイルがプロジェクトフォルダの直下にないといけないため。]
-
-//}
-
-ここまでが、既存の原稿ファイルを変更する方法でした。
-次に、新しい原稿ファイルを追加する方法を説明します。
-
-
-=== 新しい原稿ファイルを追加する
-
-新しい原稿ファイルを追加するには、次のようにします。
-
- - (1) 新しい原稿ファイルを作成する。
- - (2) 作成した原稿ファイルをプロジェクトに登録する。
- - (3) PDFファイルを生成し、原稿の内容が反映されることを確認する。
-
-順番に説明しましょう。
-
-===== (1) 新しい原稿ファイルを作成する
-
-お好みのテキストエディタを使って、新しい原稿ファイル「@<file>{01-test.re}」を作成します。
-
-このとき、次の点に注意してください。
-
- * 原稿ファイルの拡張子は「@<file>{.re}」にします。
- * 原稿ファイルの置き場所は「@<file>{contents/}」フォルダにします。
-   つまりファイルパスは「@<file>{mybook/contents/01-test.re}」になります。
- * 原稿ファイルの文字コードは「UTF-8」にします。
-
-新しい原稿ファイル「@<file>{contents/01-test.re}」の中身は、たとえば@<list>{wrmlp}のようにしてください。
-
-//list[wrmlp][原稿ファイル「@<file>{contents/01-test.re}」]{
-@<nop>{}= サンプル章タイトル
-
-@<nop>{}//abstract{
-概要概要概要
-@<nop>{}//}
-
-@<nop>{}== サンプル節タイトル
-本文本文本文
-//}
-
-//note[原稿ファイルには番号をつけるべき？]{
-この例では原稿ファイル名を「@<file>{01-test.re}」にしました。
-しかしファイル名に「@<file>{01-}」のような番号は、必ずしもつける必要はありません（つけてもいいし、つけなくてもいい）。
-
-ファイル名に番号をつけるのは、利点と欠点があります。
-
- * 利点は、MacのファインダやWindowsのエクスプローラで表示したときに、ファイルが章の順番に並ぶことです。
- * 欠点は、章の順番を入れ替えるときにファイル名の変更が必要なこと、またそれにより章ID@<fn>{fn-9yivn}が変わるのでその章や節を参照している箇所もすべて変更になることです。
-   番号をつけていない場合は、「@<file>{catalog.yml}」での順番を入れ替えるだけで済み、参照箇所も修正する必要はありません。
-
-//footnote[fn-9yivn][章IDについては@<secref>{03-syntax|subsec-chapterid}で説明します。]
-
-自分の好きなほうを選んでください。
-//}
-
-===== (2) 原稿ファイルをプロジェクトに登録する
-
-次に、作成した原稿ファイルをプロジェクトに登録しましょう。
-プロジェクトのフォルダにある「@<file>{catalog.yml}」をテキストエディタで開き、@<list>{g9t1b}のように変更してください。
-なお、このファイルでは「@<code>{#}」以降は行コメントであり読み飛ばされます。
-
-//list[g9t1b][ファイル「@<file>{catalog.yml}」]{
-PREDEF:
-  - 00-preface.re
-
-CHAPS:
-  @<del>{- 01-install.re}   @<balloon>{この行を削除}
-  @<b>{- 01-test.re}      @<balloon>{この行を追加}
-  - 02-tutorial.re
-
-APPENDIX:
-
-POSTDEF:
-  - 99-postface.re
-
-##
-## ■Tips
-## ...（以下省略）...
-//}
-
-ファイルを変更したら、忘れずに保存してください。
-
-これで、新しい原稿ファイルがプロジェクトに登録できました。
-
-===== (3) PDFファイルを生成し、原稿の内容が反映されたか確認する
-
-試しにPDFファイルを生成してみましょう。
-MacならTerminal.app、Windowsならコマンドプロンプトを開き、次のコマンドを実行してください。
-
-//terminal[][PDFファイルを生成する]{
-$ @<userinput>{rake pdf}          @<balloon>{Dockerを使っていない場合}
-$ @<userinput>{rake docker:pdf}   @<balloon>{Dockerを使っている場合}
-//}
-
-新しいPDFファイルが生成されるので、表示してみてください。
-新しい原稿ファイルの章が追加されていれば成功です。
-
-
-=== 「@<file>{catalog.yml}」の説明
-
-「@<file>{catalog.yml}」の内容は次のような構造になっています。
-
- * 「@<code>{PREDEF:}」は「まえがき」を表します。
- * 「@<code>{CHAPS:}」は本文を表します。
- * 「@<code>{APPENDIX:}」は付録を表します。
- * 「@<code>{POSTDEF:}」は「あとがき」を表します。
-
-//list[][ファイル「@<file>{catalog.yml}」]{
-@<b>{PREDEF:}
-  - 00-preface.re      @<balloon>{まえがきの章}
-
-@<b>{CHAPS:}
-  - 01-install.re      @<balloon>{本文の章}
-  - 02-tutorial.re     @<balloon>{本文の章}
-  - 03-syntax.re       @<balloon>{本文の章}
-
-@<b>{APPENDIX:}
-  - 92-filelist.re     @<balloon>{付録の章}
-
-@<b>{POSTDEF:}
-  - 99-postfix.re      @<balloon>{あとがきの章}
-//}
-
-また次のような点に注意してください。
-
- * まえがきや付録やあとがきは、なければ省略できます。
- * まえがきとあとがきには、章番号や節番号がつきません。
- * 目次はまえがきのあとに自動的につけられます@<fn>{fn-qyuwz}。
- * 大扉（タイトルページ）や奥付も自動的につけられます@<fn>{fn-fa6pt}。
-
-//footnote[fn-qyuwz][目次をつけたくない場合は、「@<file>{config.yml}」に「@<code>{toc: false}」を設定してください。]
-//footnote[fn-fa6pt][大扉をつけたくない場合は、「@<file>{config.yml}」に「@<code>{titlepage: false}」を設定してください。また奥付をつけたくない場合は「@<code>{colophon: false}」を設定してください。]
-
-//note[YAML形式]{
-「@<file>{catalog.yml}」の内容は、「YAML」という形式で書かれています。
-YAMLについてはGoogle検索で調べてください。
-ここでは3点だけ注意点を紹介します。
-
-  * タブ文字を使わないこと。
-  * 「@<code>{-}」のあとに半角空白をつけること。
-  * 「@<code>{#}」以降は行コメントとして読み飛ばされる。
-
+//list[][モジュールインポート][lang=python]{
+>>> import getfem as gf
+>>> import numpy as np
 //}
 
 
-==={subsec-compileerror} コンパイルエラーになったら
+=== @<em>{GeoTrans}オブジェクトを作成する
 
-PDFファイルを生成するときにエラーになったら、以下の点を確認してください。
-
- * インライン命令がきちんと閉じているか
- * ブロック命令の引数が足りているか、多すぎないか
- * 「@<code>|//}|」が足りてないか、または多すぎないか
- * 「@<code>|@@<nop>{}<fn>{}|」や「@<code>|@@<nop>{}<img>{}|」や「@<code>|@@<nop>{}<table>{}|」のラベルが合っているか
- * 「@<code>|@@<nop>{}<chapref>{}|」で指定した章IDが合っているか
- * 「@<code>|@@<nop>{}<secref>{}|」で指定した節や項が存在するか
- * 脚注の中で「@<code>{]}」を「@<code>{\]}」とエスケープしているか
- * 「@<code>|//image|」で指定した画像ファイルが存在するか
- * 原稿ファイル名を間違っていないか
- * 原稿ファイルの文字コードがUTF-8になっているか
-
-詳しくは@<secref>{05-faq|sec-compileerror}を見てください。
-
-
-
-=={sec-basicsyntax} 基本的な記法
-
-原稿ファイルは、ある決まった書き方（記法）に従って記述します。
-たとえば、次のような記法があります。
-
- * 章(Chapter)は「@<code>{= }」で始め、節(Section)は「@<code>{== }」で始める。
- * 箇条書きは「@<code>{ * }」で始める。
- * プログラムコードは「@<code>|//list{...//}|」で囲う。
- * 強調は「@<code>|@@<nop>{}<strong>{...}|」または「@<code>|@@<nop>{}<B>{...}|」で囲う。
-
-ここでは記法のうち基本的なものを説明します。
-詳しいことは@<chapref>{03-syntax}で説明します。
-
-
-=== コメント
-
-行コメントは「@<code>{#@#}」で、また範囲コメントは「@<code>{#@+++}」と「@<code>{#@---}」で表します。
-どちらも行の先頭から始まってないと、コメントとして認識されません。
-
-//list[][サンプル]{
-本文1
-@<b>|#@#|本文2
-本文3
-
-@<b>|#@+++|
-本文4
-@<b>|#@---|
-本文5
-//}
-
-//sampleoutputbegin[表示結果]
-
-本文1
-#@#本文2
-本文3
-
-#@+++
-本文4
-#@---
-本文5
-
-//sampleoutputend
-
-
-
-詳しくは@<secref>{03-syntax|sec-comment}を参照してください。
-
-
-=== 段落と改行
-
-空行があると、新しい段落になります。
-改行は無視されるか、または半角空白扱いになります。
-通常は1文ごとに改行して書きます。
-
-//list[][サンプル]{
-言葉を慎みたまえ！君はラピュタ王の前にいるのだ！
-
-これから王国の復活を祝って、諸君にラピュタの力を見せてやろうと思ってね。見せてあげよう、ラピュタの雷を！
-
-旧約聖書にあるソドムとゴモラを滅ぼした天の火だよ。
-ラーマヤーナではインドラの矢とも伝えているがね。
-//}
-
-//sampleoutputbegin[表示結果]
-
-言葉を慎みたまえ！君はラピュタ王の前にいるのだ！
-
-これから王国の復活を祝って、諸君にラピュタの力を見せてやろうと思ってね。見せてあげよう、ラピュタの雷を！
-
-旧約聖書にあるソドムとゴモラを滅ぼした天の火だよ。
-ラーマヤーナではインドラの矢とも伝えているがね。
-
-//sampleoutputend
-
-
-
-詳しくは@<secref>{03-syntax|sec-paragraph}を参照してください。
-
-
-=== 見出し
-
-章(Chapter)や節(Section)といった見出しは、「@<code>{= }」や「@<code>{== }」で始めます。
-また章には概要を書くといいでしょう。
-
-//list[][サンプル]{
-@<b>|=| 章(Chapter)見出し
-
-@<b>|//abstract{|
-章の概要。
-@<b>|//}|
-
-@<b>|==| 節(Section)見出し
-
-@<b>|===| 項(Subsection)見出し
-
-@<b>|====| 目(Subsubsection)見出し
-
-@<b>|=====| 段(Paragraph)見出し
-
-@<b>|======| 小段(Subparagraph)見出し
+//list[][GeoTransオブジェクトの作成][lang=python]{
+>>> gt = gf.GeoTrans("GT_PK(1, 1)")
+>>> print(gt)
+GT_PK(1,1)
 //}
 
 
+=== @<em>{Mesh}オブジェクトを作成する
 
-Starterでは、章(Chapter)は1ファイルにつき1つだけにしてください。
-1つのファイルに複数の章(Chapter)を入れないでください。
+@<em>{Mesh}オブジェクトを作成します。
+今回は長さ10.0の1次元のメッシュを作成します。
 
-見出しについての詳細は@<secref>{03-syntax|sec-heading}を参照してください。
+//list[][Meshオブジェクトの作成][lang=python]{
+>>> mesh = gf.Mesh("empty", 1)
+>>> pts = np.array([[0.0, 10.0]])
+>>> mesh.add_convex(gt, pts)
+array([0], dtype=int32)
+>>> print(mesh)
 
+BEGIN POINTS LIST
 
-=== 箇条書き
+  POINT COUNT 2
+  POINT  0  0
+  POINT  1  10
 
-番号なし箇条書きは「@<code>{ * }」で始めます（先頭に半角空白が必要）。
-
-//list[][サンプル]{
-@<b>| * |箇条書き1
-@<b>| * |箇条書き2
-@<b>| ** |入れ子の箇条書き
-@<b>| *** |入れ子の入れ子
-//}
-
-//sampleoutputbegin[表示結果]
-
- * 箇条書き1
- * 箇条書き2
- ** 入れ子の箇条書き
- *** 入れ子の入れ子
-
-//sampleoutputend
+END POINTS LIST
 
 
 
-番号つき箇条書きは「@<code>{ 1. }」のように始める方法と、「@<code>{ - A. }」のように始める方法があります（どちらも先頭に半角空白が必要）。
-後者では番号の自動採番はされず、指定された文字列がそのまま出力されます。
+BEGIN MESH STRUCTURE DESCRIPTION
 
-//list[][サンプル]{
- @<b>|1.| この記法では数字しか指定できず、
- @<b>|2.| また入れ子にもできない。
+  CONVEX COUNT 1
+  CONVEX 0    'GT_PK(1,1)'      0  1
 
- @<b>|- (A)| この記法だと、英数字だけでなく
- @<b>|- (B)| 任意の文字列が使える
- @<b>|-- (B-1)| 入れ子もできるし、
- @<b>|***| 番号なし箇条書きも含められる
-//}
-
-//sampleoutputbegin[表示結果]
-
- 1. この記法では数字しか指定できず、
- 2. また入れ子にもできない。
-
- - (A) この記法だと、英数字だけでなく
- - (B) 任意の文字列が使える
- -- (B-1) 入れ子もできるし、
- *** 番号なし箇条書きも含められる
-
-//sampleoutputend
-
-
-
-箇条書きの詳細は@<secref>{03-syntax|sec-list}を参照してください。
-
-
-=== 用語リスト
-
-用語リスト（HTMLでいうところの「@<code>{<dl><dt><dd>}」）は、「@<code>{ : }」で始めて@<fn>{axm3t}、次の行からインデントします@<fn>{diwmv}。
-//footnote[axm3t][先頭の半角空白は入れるようにしましょう。過去との互換性のため、先頭の半角空白がなくても動作しますが、箇条書きとの整合性のために半角空白を入れることを勧めます。]
-//footnote[diwmv][説明文のインデントは、半角空白でもタブ文字でもいいです。]
-
-//list[][サンプル]{
-@<b>| : |用語1
-    説明文。
-    説明文。
-@<b>| : |用語2
-    説明文。
-    説明文。
-//}
-
-//sampleoutputbegin[表示結果]
-
- : 用語1
-    説明文。
-    説明文。
- : 用語2
-    説明文。
-    説明文。
-
-//sampleoutputend
-
-
-
-詳しくは@<secref>{03-syntax|sec-termlist}を参照してください。
-
-
-=== 太字と強調
-
-太字は「@<code>|@@<nop>{}<b>{...}|」で囲み、強調は「@<code>|@@<nop>{}<B>{...}|」または「@<code>|@@<nop>{}<strong>{...}|」で囲みます。
-強調は、太字になるだけでなくフォントがゴシック体になります。
-
-//list[][サンプル]{
-テキスト@<b>|@@<nop>$$<b>{|テキスト@<b>|}|テキスト
-
-テキスト@<b>|@@<nop>$$<B>{|テキスト@<b>|}|テキスト
-//}
-
-//sampleoutputbegin[表示結果]
-
-テキスト@<b>{テキスト}テキスト
-
-テキスト@<B>{テキスト}テキスト
-
-//sampleoutputend
-
-
-
-日本語の文章では、強調するときは太字のゴシック体にするのがよいとされています。
-なので強調には「@<code>|@@<nop>{}<B>{...}|」または「@<code>|@@<nop>{}<strong>{...}|」を使い、「@<code>|@@<nop>{}<b>{...}|」は使わないでください。
-
-強調や太字などテキストの装飾についての詳細は@<secref>{03-syntax|sec-decoration}を参照してください。
-
-//note[インライン命令]{
-「@<code>|@@<nop>{}<B>{...}|」のような記法は@<em>{インライン命令}と呼ばれます。
-インライン命令は入れ子にできますが（Starterによる拡張）、複数行を含めることはできません。
-詳細は@<secref>{03-syntax|subsec-inlinecmd}を見てください。
-
-#@#インライン命令は入れ子にできます（Starterによる拡張）。
-#@#たとえば「@<code>|@@<nop>{}<code>{fn(@@<nop>{}<b>{@@<nop>{}<i>{arg}})}|」と書くと「@<code>{fn(@<b>{@<i>{arg}})}」のように表示されます。
-#@#
-#@#またインライン命令は必ず1行に記述します。
-#@#複数行を含めることはできません。
-#@#
-#@#//list[][このような書き方はできない]{
-#@#@<B>|@@<nop>{}<B>{|テキスト
-#@#テキスト
-#@#テキスト@<B>|}|
-#@#//}
+END MESH STRUCTURE DESCRIPTION
 
 //}
 
+出力結果からインデックス0の点が0.0にあり、インデックス1の点が10.0の位置にあることが分かります。
+また、点0と点1に接続された凸(convex)が定義されていることが分かります。
 
-=== プログラムリスト
+=== @<em>{Mesh}オブジェクトの面を取得する
 
-プログラムリストは「@<code>|//list[ラベル][説明文]{ ... //}|」で囲みます。
+@<em>{Mesh}には@<em>{Model}オブジェクトのブリック(brick)を定義するために領域を定義する必要があります。
+今回は左端と右端に領域を定義しておきます。
+領域の定義には面番号が必要となるので取得します。
+面を取得するためには@<em>{outer_faces_with_direction}メソッドを使用します。
+このメソッドはベクトルとベクトルからの角度(rad)を指定してその範囲のベクトルを法線とする面を取得します。
 
-  * ラベルは、他と重複しない文字列にします。
-  * 「@<code>|@@<nop>{}<list>{ラベル名}|」のようにプログラムリストを参照できます。
-  * 説明文に「@<code>{]}」を含める場合は、「@<code>{\]}」のようにエスケープします。
+//list[][左端の面の取得][lang=python]{
+>>> fb1 = mesh.outer_faces_with_direction([-1.0], 0.01)
+>>> print(fb1)
 
-//list[][サンプル]{
-サンプルコードを@<b>|@@<nop>$$<list>{fib1}|に示します。
+[[0]
+ [1]]
 
-@<b>|//list[fib1][フィボナッチ数列]|{
-def fib(n):
-    return n if n <= 1 else fib(n-1) + fib(n-2)
-@<b>|//}|
 //}
 
-//sampleoutputbegin[表示結果]
+出力を見ると面番号は2行の配列で構成されています。
+1行目は凸(convex)のIDを、2行目は凸(convex)内の面番号を表しています。
+つまり、上の出力はIDが0の凸(convex)の面番号1を指定していることが分かります。
+左端と同様に右端の面番号も取得します。
 
-サンプルコードを@<list>{fib1}に示します。
+//list[][右端の面の取得][lang=python]{
+>>> fb2 = mesh.outer_faces_with_direction([1.0], 0.01)
+>>> print(fb2)
 
-//list[fib1][フィボナッチ数列]{
-def fib(n):
-    return n if n <= 1 else fib(n-1) + fib(n-2)
+[[0]
+ [0]]
+
 //}
 
-//sampleoutputend
+領域を指定して領域を定義することも可能です。
+@<em>{outer_faces_with_direction}は2つの点で定義されるBOX内にある面を取得します。
+@<m>$x = -1.0$から@<m>$x = 11.0$の範囲にある点を出力してみます。
+
+//list[][BOX内の面の取得][lang=python]{
+>>> print(mesh.outer_faces_in_box([-1.0], [11.0]))
+
+[[0 0]
+ [0 1]]
 
 
-
-第1引数も第2引数も、省略できます。
-たとえば第1引数だけを省略するには「@<code>|//list[][説明]{|」のようにします。
-両方とも省略するには「@<code>|//list[][]{|」または「@<code>|//list{|」のようにします。
-
-またプログラムリストの中で、インライン命令が使えます。
-たとえば次の例では、追加した箇所を「@<code>|@@<nop>{}<b>{...}|」で@<fn>{0hz8w}、削除した箇所を「@<code>|@@<nop>{}<del>{...}|」で表しています。
-//footnote[0hz8w][プログラムリストの中では、「@<code>|@@<nop>{}<B>{}|」（強調）ではなく「@<code>|@@<nop>{}<b>{}|」（太字）を使ってください。なぜなら、「@<code>|@@<nop>{}<B>{}|」を使うとフォントが等幅フォントからゴシック体に変更されてしまい、表示がずれてしまうからです。]
-
-//list[][サンプル]{
-/@<nop>$$/list{
-function fib(n) {
-  @<b>{@@<nop>$$<del>|}if (n <= 1) { return n; }@<b>{|}
-  @<b>{@@<nop>$$<del>|}else        { return fib(n-1) + fib(n-2); }@<b>{|}
-  @<b>{@@<nop>$$<b>|}return n <= 1 ? n : fib(n-1) + fib(n-2);@<b>{|}
-}
-/@<nop>$$/}
 //}
 
-//sampleoutputbegin[表示結果]
+この範囲にはメッシュの全ての面(2個)が含まれています。
+この面は使用しないため変数には保存しません。
 
-//list{
-function fib(n) {
-  @<del>|if (n <= 1) { return n; }|
-  @<del>|else        { return fib(n-1) + fib(n-2); }|
-  @<b>|return n <= 1 ? n : fib(n-1) + fib(n-2);|
-}
+=== @<em>{Mesh}オブジェクトの領域を設定する
+
+取得した面をもとに領域を設定します。
+@<em>{set_region}メソッドを使用して領域を設定します。
+領域IDを設定する必要があるため変数@<em>{LEFT}と@<em>{RIGHT}に番号を定義しておきます。
+//list[][領域の設定][lang=python]{
+>>> LEFT = 1
+>>> RIGHT = 2
+>>> mesh.set_region(LEFT, fb1)
+>>> mesh.set_region(RIGHT, fb2)
+>>> print(mesh)
+
+BEGIN POINTS LIST
+
+  POINT COUNT 2
+  POINT  0  0
+  POINT  1  10
+
+END POINTS LIST
+
+
+
+BEGIN MESH STRUCTURE DESCRIPTION
+
+CONVEX COUNT 1
+CONVEX 0    'GT_PK(1,1)'      0  1
+
+END MESH STRUCTURE DESCRIPTION
+BEGIN REGION 1
+0/1
+END REGION 1
+BEGIN REGION 2
+0/0
+END REGION 2
+
 //}
 
-//sampleoutputend
+@<em>{Mesh}オブジェクトに領域(@<em>{REGION})が追加されていることが分かります。
+「凸(convex)/面番号」の表記となっていることに注意してください。
 
 
+=== @<em>{MeshFem}オブジェクトを作成する
 
-プログラムコードについての詳細は@<secref>{03-syntax|sec-program}を参照してください。
+@<em>{MeshFem}オブジェクトを作成します。
+まずは@<href>{https://getfem.readthedocs.io/ja/latest/python/cmdref_MeshFem.html, 公式サイト}に載っている@<em>{MeshFem}オブジェクトの定義から見ていきましょう。
+公式サイトには「このオブジェクトは，メッシュ全体で定義された有限要素法を表します．」と書かれています。
+@<em>{GetFEM}の特徴で説明した通りこのライブラリは@<em>{Mesh}オブジェクトと@<em>{Fem}(有限要素法)オブジェクトが完全に分離されています。
+そのため、2つのオブジェクトの対応関係を管理するオブジェクトが必要になります。
+それがこのオブジェクトです。
 
-//note[ブロック命令]{
-「@<code>|//list{ ... //}|」のような形式の命令を、@<B>{ブロック命令}といいます。
-ブロック命令は入れ子にできますが（Starterによる拡張）、できないものもあります。
-詳細は@<secref>{03-syntax|subsec-blockcmd}を見てください。
+@<em>{Mesh}オブジェクトを元に@<em>{MeshFem}オブジェクトを作っていきます。
+作成の際には、@<em>{Mesh}オブジェクトと求めたい物理量の次元を与えます。
+スカラーの場合は1、ベクトルの場合はそのベクトルの自由度(1, 2, 3...)を与えます。
+今回は1自由度のベクトルを定義します。
+
+//list[][@<em>{MeshFem}オブジェクトの作成][lang=python]{
+>>> mfu = gf.MeshFem(mesh, 1)
+>>> print(mfu)
+BEGIN MESH_FEM
+
+QDIM 1
+ BEGIN DOF_ENUMERATION
+ END DOF_ENUMERATION
+END MESH_FEM
 //}
 
+出力から分かるように、この時点では凸(convex)に@<em>{Fem}(有限要素法)オブジェクトは割り当てられていません。
+そのため、@<em>{Fem}(有限要素法)オブジェクトを作成して設定します。
+ここでは、一般的に使われている単体の古典的Lagrange要素(@<em>{"FEM_PK(1,1)"})を設定します。
+凸(convex)のIDを指定して設定することもできますが、今回は1要素ですので指定はしません。
+凸(convex)に@<em>{"FEM_PK(1,1)"}が設定されていることが分かります。
 
-=== ターミナル画面
+//list[][@<em>{MeshFem}オブジェクトへの有限要素法の設定][lang=python]{
+>>> f = gf.Fem("FEM_PK(1,1)")
+>>> mfu.set_fem(f)
+>>> print(mfu)
 
-ターミナル（端末）の画面は、「@<code>|//terminal{ ... //}|」を使います。
-次の例では、引数にラベル名と説明文字列を指定します。
-また「@<code>|@@<nop>{}<userinput>{...}|」はユーザ入力を表します。
+BEGIN MESH_FEM
 
-//list[][サンプル]{
-@<b>|//terminal[term-1][PDFを生成]{|
-$ @@<nop>$$<userinput>{rake pdf}          @@<nop>$$<balloon>{Dockerを使わない場合}
-$ @@<nop>$$<userinput>{rake docker:pdf}   @@<nop>$$<balloon>{Dockerを使う場合}
-@<b>|//}|
+QDIM 1
+CONVEX 0 'FEM_PK(1,1)'
+BEGIN DOF_ENUMERATION
+ 0:  0 1
+ END DOF_ENUMERATION
+END MESH_FEM
+
 //}
 
-//sampleoutputbegin[表示結果]
+//note[有限要素法の種類について]{
 
-//terminal[term-1][PDFを生成]{
-$ @<userinput>{rake pdf}          @<balloon>{Dockerを使わない場合}
-$ @<userinput>{rake docker:pdf}   @<balloon>{Dockerを使う場合}
+通常の解析では単体の古典的Lagrange要素を使用します。
+
+//list[][@<em>{MeshFem}オブジェクトへの単体の古典的Lagrange要素の設定][lang=python]{
+>>> mfu.set_fem(f)
 //}
 
-//sampleoutputend
-
-
-
-ラベル名を指定していれば、プログラムリストと同じように「@<code>|@@<nop>{}<list>{ラベル名}|」で参照できます。
-またラベル名と説明文字列はどちらも省略可能です。
-どちらも省略すると「@<code>|//terminal{ ... //}|」のように書けます。
-
-詳しくは@<secref>{03-syntax|sec-terminal}を参照してください。
-
-
-=== 脚注
-
-脚注は、脚注をつけたい箇所に「@<code>|@@<nop>{}<fn>{ラベル}|」をつけ、段落の終わりに「@<code>|//footnote[ラベル][脚注文]|」を書きます。
-
-//list[][サンプル]{
-本文テキスト@<b>|@@<nop>$$<fn>{fn-12}|。
-
-@<b>|//footnote[fn-12][このように脚注文を書きます。]|
-//}
-
-//sampleoutputbegin[表示結果]
-
-本文テキスト@<fn>{fn-12}。
-
-//footnote[fn-12][このように脚注文を書きます。]
-
-//sampleoutputend
-
-
-
-
-=== 図
-
-図を入れるには、「@<code>|//image[画像ファイル名][説明文][オプション]|」を使います。
-
- * 画像ファイルは「@<file>{images/}」フォルダに置きます。
- * 画像ファイルの拡張子は指定しません。
- * ラベルを使って「@<code>|@@<nop>{}<img>{ラベル}|」のように参照できます。
-
-//list[][サンプル]{
-@<b>|//image[tw-icon][サンプル画像][scale=0.3]|
-//}
-
-//sampleoutputbegin[表示結果]
-
-//image[tw-icon][サンプル画像][scale=0.3]
-
-//sampleoutputend
-
-
-
-Starterでは、画像を入れる位置を指定したり、画像の周りに枠線をつけたりできます。
-詳しくは@<secref>{03-syntax|sec-image}を参照してください。
-
-
-=== ノート
-
-Starterでは、本文を補足する文章を「ノート」という囲み枠で表します。
-
-//list[][サンプル]{
-/@<nop>$$/note[ムスカの苦手なもの]{
-実は、ムスカには「虫が苦手」という公式な設定があります。
-有名な『読める、読めるぞ！』のシーンでムスカが顔の周りに群がるハエを追い払うのは、邪魔だったからだけでなく、虫が苦手だったからです。
-/@<nop>$$/}
-//}
-
-//sampleoutputbegin[表示結果]
-
-//note[ムスカの苦手なもの]{
-実は、ムスカには「虫が苦手」という公式な設定があります。
-有名な『読める、読めるぞ！』のシーンでムスカが顔の周りに群がるハエを追い払うのは、邪魔だったからだけでなく、虫が苦手だったからです。
-//}
-
-//sampleoutputend
-
-
-
-ノート本文には箇条書きやプログラムコードを埋め込めます。
-詳しくは@<secref>{03-syntax|sec-note}を参照してください。
-
-
-=== 表
-
-表は、次のように書きます。
-
- * 「@<code>|//table[ラベル][説明文]{ ... //}|」で囲みます。
- * セルは1つ以上のタブで区切ります。
- * ヘッダの区切りは「@<code>{-}」または「@<code>{=}」を12個以上並べます。
- * ラベルを使って「@<code>|@@<nop>{}<table>{ラベル}|」のように参照できます。
-
-//list[][サンプル]{
-@<b>|//table[tbl-31][サンプル表]{|
-Name	Val1	Val2
-@<b>|--------------------|
-AA	12	34
-BB	56	78
-@<b>|//}|
-//}
-
-//sampleoutputbegin[表示結果]
+また、その他の有限要素法には次のものがあります。
 
 //table[tbl-31][サンプル表]{
 Name	Val1	Val2
@@ -799,210 +271,235 @@ AA	12	34
 BB	56	78
 //}
 
-//sampleoutputend
-
-
-
-PDFではセルの右寄せ・左寄せ・中央揃えができます。
-詳しくは@<secref>{03-syntax|sec-table}を参照してください。
-
-
-=== 数式
-
-@<LaTeX>{}の書き方を使って数式を記述できます。
-
-//list[][サンプル]{
-@<b>|//texequation[euler][オイラーの公式]{|
-e^{i\theta} = \sin{\theta} + i\cos{\theta}
-@<b>|//}|
-
-@<b>|@@<nop>$$<m>$\theta = \pi$|のときは@<b>|@@<nop>$$<m>$e^{i\pi} = -1$|となり、これはオイラーの等式と呼ばれます。
 //}
 
-//sampleoutputbegin[表示結果]
+ここまでが、@<em>{Mesh}オブジェクトと@<em>{Fem}オブジェクトから@<em>{MeshFem}オブジェクトを作成する方法でした。
+次に、積分法を定義するための@<em>{MeshIm}オブジェクトを作成する方法を説明します。
 
-//texequation[euler][オイラーの公式]{
-e^{i\theta} = \sin{\theta} + i\cos{\theta}
+
+=== @<em>{MeshIm}オブジェクトを作成する
+
+@<em>{MeshIm}オブジェクトを作成します。
+まずは@<href>{https://getfem.readthedocs.io/ja/latest/python/cmdref_MeshIm.html, 公式サイト}に載っている@<em>{MeshIm}オブジェクトの定義から見ていきましょう。
+公式サイトには「このオブジェクトは，メッシュ全体で定義された積分法を表します」と書かれています。
+@<em>{GetFEM}の特徴で説明した通りこのライブラリは@<em>{Mesh}オブジェクトと@<em>{Integ}(積分法)オブジェクトが完全に分離されています。
+そのため、2つのオブジェクトの対応関係を管理するオブジェクトが必要になります。
+それがこのオブジェクトです。
+ここでは、積分点が1点のGauss積分法を定義して@<em>{MeshIm}オブジェクトを作成します。
+
+//list[][MeshImオブジェクトの作成][lang=python]{
+>>> im = gf.Integ("IM_GAUSS1D(1)")
+>>> mim = gf.MeshIm(mesh, im)
 //}
 
-@<m>$\theta = \pi$のときは@<m>$e^{i\pi} = -1$となり、これはオイラーの等式と呼ばれます。
+//note[積分法の種類について]{
 
-//sampleoutputend
+また、その他の積分法には次のものがあります。
 
-
-
-詳しくは@<secref>{03-syntax|sec-mathexpr}を参照してください。
-
-
-
-=={sec-pdftype} 印刷用PDFと電子用PDF
-
-Starterでは、印刷用と電子用とを切り替えてPDFファイルを生成できます。
-両者の違いはあとで説明するとして、まず印刷用と電子用のPDFファイルを生成する方法を説明します。
-
-
-=== 印刷用と電子用を切り替えてPDFを生成する
-
-Starterでは、環境変数「@<code>{$STARTER_TARGET}」を設定することで印刷用と電子用とを切り替えます。
-
-//terminal[][macOSやLinuxの場合@<fn>{fn-3pf5z}]{
-$ @<userinput>{@<b>{export STARTER_TARGET=pbook}}  @<balloon>{印刷用に設定}
-$ @<userinput>{rake pdf}          @<balloon>{またはDockerを使うなら rake docker:pdf}
-
-$ @<userinput>{@<b>{export STARTER_TARGET=ebook}}  @<balloon>{電子用に設定}
-$ @<userinput>{rake pdf}          @<balloon>{またはDockerを使うなら rake docker:pdf}
 //}
 
-//footnote[fn-3pf5z][「@<code>{pbook}」は「printing book」、「@<code>{ebook}」は「electronic book」を表します。]
+次に剛性方程式を管理作成するための@<em>{Model}オブジェクトを作成します。
 
-Windowsの場合は、「@<code>{set STARTER_TARGET=pbook}」や「@<code>{set STARTER_TARGET=ebook}」を使って環境変数を設定してください。
+=== @<em>{Model}オブジェクトを作成する
 
-または、「@<file>{config-starter.yml}」に設定項目「@<code>{target:}」があるので、これを「@<code>{pbook}」（印刷用）または「@<code>{ebook}」（電子用）に設定してもいいです。
+新しい@<em>{Model}オブジェクトを作成するには、次のようにします。
 
-ただし、この設定よりも環境変数「@<code>{$STARTER_TARGET}」のほうが優先されます。
-設定ファイルを変更しても切り替わらなくて困った場合は、環境変数を未設定に戻しましょう。
+ - (1) @<em>{Model}オブジェクトを定義する。
+ - (2) 変数を定義する。
+ - (3) ブリック(brick)を定義する。
 
-//terminal[][macOSやLinuxの場合]{
-$ @<userinput>{@<b>{unset STARTER_TARGET}}    @<balloon>{環境変数を未設定に戻す}
+順番に説明しましょう。
+各メソッドの詳しい説明は@<href>{https://getfem.readthedocs.io/ja/latest/python/cmdref_Model.html, 公式サイト}を参照してください。
+
+===== (1) @<em>{Model}オブジェクトを定義する。
+
+@<em>{Model}オブジェクトは次のように定義します。
+実数が未知数のオブジェクトを作成するため、@<em>{"real"}を引数とします。
+
+//list[][@<em>{Model}オブジェクトの作成][lang=python]{
+>>> md = gf.Model("real")
 //}
 
+===== (2) 変数を定義する。
 
-=== 印刷用PDFと電子用PDFの違い
+変数を定義します。
+問題が解かれた際にはこの変数に解が出力されます。
+変数は@<em>{MeshFem}オブジェクトにリンクして定義します。
+メソッドは@<em>{add_fem_variable}を使用します。
 
-印刷用PDFと電子用PDFには、次のような違いがあります。
-
- : カラー
-	印刷用では、カラーは使われず白黒になります（画像は除く）。@<br>{}
-	電子用では、カラーが使われます@<fn>{fn-8w0hm}。
- : 左右の余白幅
-	印刷用では、左右の余白幅が異なります。
-	具体的には、見開きにおいて内側の余白を約2cm、外側の余白を約1.5cmにしています@<fn>{fn-yuyf5}。
-	これは見開きでの読みやすさを確保したうえで本文幅をできるだけ広げるための工夫です。@<br>{}
-	電子用では見開きを考慮する必要がないので、左右の余白幅は同じに設定されます。
-: 表紙
-	印刷用では、表紙がつきません。
-	なぜなら、表紙のPDFファイルは本文とは別にして印刷所に入稿するからです。@<br>{}
-	電子用では、（設定されていれば）表紙がつきます@<fn>{fn-yybgl}。
-
-//footnote[fn-8w0hm][カラーの設定は「@<file>{sty/starter-color.sty}」を見てください。変更する場合はこのファイルではなく「@<file>{sty/mystyle.sty}」に書くといいでしょう。]
-//footnote[fn-yuyf5][余白幅は初期設定によって多少の違いがあります。設定の詳細は「@<file>{sty/mytextsize.sty}」を見てください。]
-//footnote[fn-yybgl][表紙のつけ方は@<secref>{04-customize|subsec-coverpdf}を見てください。]
-
-またこれらの違いに加えて、印刷用PDFファイルにはノンブルをつける必要があります。
-詳しくは次で説明します。
-
-
-=== ノンブル
-
-「ノンブル」とは全ページにつける通し番号のことです。
-ページ番号と似ていますが、次のような違いがあります。
-
- * ページ番号は目次と本文で番号が連続してなかったり、空白ページにはついてなかったりするので、通し番号にはなっていません。
-   ノンブルは全ページを通じて連続した番号になっています。
- * ページ番号は読者のためにあるので、ページ内で目につくところに置かれます。
-   ノンブルは印刷所だけが分かればいいので（ページの順番を確認するため）、ページ内で目立たない場所に小さく置かれます。
-
-詳しくは「ノンブル qiita.com」でGoogle検索してください。
-
-印刷所に入稿するPDFファイルには、ノンブルが必要になることがあります。
-ノンブルが必要かどうかは印刷所によって異なり、たとえば「日光企画」なら必須、「ねこのしっぽ」なら必須ではありません。
-詳しくは入稿先の印刷所に聞いてください。
-
-Starterでは、PDFファイルにノンブルをつける機能が用意されています。
-
-//terminal[][PDFファイルにノンブルをつける]{
-$ @<userinput>{rake pdf}           @<balloon>{PDFファイルを生成する}
-$ @<userinput>{rake pdf:nombre}    @<balloon>{PDFファイルにノンブルをつける}
+//list[][変数の定義][lang=python]{
+>>> md.add_fem_variable("u", mfu)
 //}
 
-Dockerを使っている場合は、「@<code>{rake pdf:nombre}」のかわりに「@<code>{rake docker:pdf:nombre}」を使ってください。
-また「@<code>{rake pdf:nombre}」はノンブルをつけるだけであり、再コンパイルはしないので注意してください。
+===== (3) ブリック(brick)を定義する。
 
-なお「@<href>{https://kauplan.org/pdfoperation/, PDFOperation}」を使っても、PDFファイルにノンブルが簡単につけられます。
+ブリック(brick)を定義します。
+今回は図XXXXに示すモデルを作成します。
 
-//note[ノンブル用フォントの埋め込み]{
-残念ながら、「@<code>{rake pdf:nombre}」でノンブルをつけるとそのフォントがPDFファイルに埋め込まれません（これはPDFファイルを操作しているライブラリの限界によるものです）。
-そのため、印刷所に入稿するまえにフォントを埋め込む必要があります。
+このモデルを作成するために必要なブリックは以下の通りです。
 
-対策方法は@<href>{https://kauplan.org/pdfoperation/}を見てください。
+ * 等方性線形弾性項
+ * Dirichlet条件(固定条件)
+ * ソース項(荷重条件)
+
+まずは、楕円項を追加します。
+
+//list[][楕円項の追加][lang=python]{
+>>> k = 2.0
+>>> md.add_initialized_data("k", [k])
+>>> md.add_generic_elliptic_brick(mim, "u", "k")
+0
 //}
 
+出力された0はブリック(brick)のインデックスを表しています。
 
-=={sec-preview} 高速プレビュー
+次に、Dirichlet条件(固定条件)を追加します。
+Dirichlet条件は以下の式で表されます。
+//texequation[dirichlet][Dirichlet条件]{
+Hu = r
+//}
+ここで、@<m>$H$は(自由度)を次元とした行列、@<m>$u$と@<m>$r$はそれぞれ(自由度)を次元としたベクトルです。
+@<m>$u$は先程定義した変数を表しています。
+今回は左端が固定条件となっているため@<m>$u = {0}$を設定します。
+ゆえに、@<m>$H = [[0]]$および@<m>$r = \{0\}$となります。
+@<m>$H$と@<m>$r$は@<em>{add_initialized_data}メソッドを使用して固定サイズデータとして定義します。
+それぞれ@<em>{"H"}と@<em>{"r"}と名前をつけておき、@<em>{add_generalized_Dirichlet_condition_with_multipliers}メソッドでDirichlet条件を定義します。
+引数には@<em>{MeshIm}オブジェクトと@<em>{MeshFem}オブジェクトも必要です。
 
-ページ数が多くなると、PDFファイルへのコンパイルに時間がかかるようになり、執筆に支障が出ます。
-
-ここでは高速にプレビューするための機能を紹介します。
-
-
-=== 指定した章だけをコンパイルする
-
-Starterでは、環境変数「@<code>{$STARTER_CHAPTER}」を設定するとその章(Chapter)だけをコンパイルします。
-これは章の数が多い場合や、著者が多数いる合同誌の場合にはとても効果的です。
-
-//terminal[][例：03-syntax-faq.reだけをコンパイルする]{
-$ @<userinput>{@<b>{export STARTER_CHAPTER=03-syntax}}   @<balloon>{「.re」はつけない}
-$ @<userinput>{rake pdf}   @<balloon>{Dockerを使っているなら rake docker:pdf}
-
-$ @<userinput>{@<b>{STARTER_CHAPTER=03-syntax rake pdf}}  @<balloon>{これでもよい}
+//list[][Dirichlet条件(固定条件)の追加][lang=python]{
+>>> md.add_initialized_data("H", [[1.0]])
+>>> md.add_initialized_data("r", [0.0])
+>>> md.add_generalized_Dirichlet_condition_with_multipliers(
+...     mim, "u", mfu, LEFT, "r", "H"
+... )
+1
 //}
 
-このとき、他の章は無視されます。
-また表紙や目次や大扉や奥付も無視されます。
+出力された1はブリック(brick)のインデックスを表しています。
 
-全体をコンパイルする場合は、「@<code>{$STARTER_CHAPTER}」をリセットしてください。
+最後にソース項(荷重条件)を追加します。
+使用するメソッドは@<em>{add_source_term_brick}メソッドを使用して荷重条件を追加します。
+荷重条件をベクトル@<m>$F = \{1.0\}$で設定します。
 
-//terminal[][全体をコンパイルする]{
-$ @<userinput>{@<b>{unset STARTER_CHAPTER}}    @<balloon>{「$」はつけないことに注意}
+//list[][ソース項(荷重条件)の追加][lang=python]{
+>>> F = mfu.eval("1.0")
+>>> md.add_initialized_fem_data("F", mfu, F)
+>>> md.add_source_term_brick(mim, "u", "F", RIGHT)
+Trace 2 in getfem_models.cc, line 4387: Mass term assembly for Dirichlet condition
+Trace 2 in getfem_models.cc, line 4424: Source term assembly for Dirichlet condition
+2
 //}
 
+ソース項はアセンブリングが必要となるためその情報が出力されます。
+2はブリック(brick)のインデックスを表しています。
 
-=== 画像読み込みを省略するドラフトモード
 
-Starterでは、画像の読み込みを省略する「ドラフトモード」を用意しました。
-ドラフトモードにすると、画像のかわりに枠線が表示されます。
-こうすると、（@<LaTeX>{}のコンパイル時間は変わりませんが）DVIファイルからPDFを生成する時間が短縮されます。
+=== 求解
 
-この機能は、図やスクリーンショットが多い場合や、印刷用に高解像度の画像を使っている場合は、特に効果が高いです。
+モデルを定義したら、@<em>{solve}メソッドを使用して解くことができます。
+//list[][求解][lang=python]{
+>>> md.solve()
+Trace 2 in getfem_models.cc, line 3464: Generic elliptic: generic matrix assembly
+Trace 2 in getfem_models.cc, line 4387: Mass term assembly for Dirichlet condition
+Trace 2 in getfem_models.cc, line 4424: Source term assembly for Dirichlet condition
+Trace 2 in getfem_models.cc, line 3300: Generic source term assembly
+Trace 2 in getfem_models.cc, line 3307: Source term: generic source term assembly
+(0, 1)
+//}
+各項がアセンブリングされている旨のメッセージが出力されます。@<em>{(0, 1)}はXXXXX。
 
-ドラフトモードにするには、@<file>{config-starter.yml}で「@<code>{draft: true}」を設定するか、または環境変数「@<em>{$STARTER_DRAFT}」に何らかの値を入れてください。
+==={subsec-compileerror} @<em>{solve}がエラーになったら
 
-//terminal[][ドラフトモードにしてPDFを生成する]{
-$ @<userinput>{export STARTER_DRAFT=1}  @<balloon>{ドラフトモードをonにする}
-$ @<userinput>{rake pdf}                @<balloon>{またはDocker環境なら rake docker:pdf}
+XXXXエラーになったら、以下の点を確認してください。
 
-$ @<userinput>{unset STARTER_DRAFT}     @<balloon>{ドラフトモードをoffにする}
+ * AAAAA
+ * BBBBB
+ * CCCCC
+
+詳しくはXXXXXを見てください。
+
+== 解のエクスポート
+
+以上で有限要素法が解けました。
+次に、解いた解を可視化する必要があります。
+@<em>{GetFEM}には可視化機能はないため、外部の可視化ライブラリを使用する必要があります。
+今回は@<em>{PyVista}を使用するため@<em>{VTK}ファイルをエクスポートします。
+変数@<em>{u}の値は@<em>{variable}メソッドを使用して出力します。
+//list[][解のエクスポート][lang=python]{
+>>> U = md.variable("u")
+>>> print(U)
+[0. 5.]
+>>> mfu.export_to_vtk("mfu.vtk", "ascii", mfu, U, "U")
 //}
 
-また「ドラフトモードにしてPDF生成時間を短縮したい、でもこの画像は表示して確認したい」という場合は、「@<code>|//image[...][...][@<b>{draft=off}]|」のように指定すると、その画像はドラフトモードが解除されてPDFに表示されます。
+出力後、同じディレクトリにファイル@<em>{"mfu.vtk"}が出力されます。
+//list[][VTKファイルの内容][]{
+# vtk DataFile Version 2.0
+Exported by GetFEM
+ASCII
+DATASET UNSTRUCTURED_GRID
+POINTS 2 float
+ 0 0 0
+ 10 0 0
+
+CELLS 1 3
+ 2 0 1
+
+CELL_TYPES 1
+ 3
+
+POINT_DATA 2
 
 
-=== 自動リロードつきHTMLプレビュー
+SCALARS U float 1
+LOOKUP_TABLE default
+ 0 5
+//}
+VTKの詳しいフォーマットについてはXXXXを参照してください。
+@<m>$x = 10.0$で@<m>$U=5.0$の値となっていることが確認できます。
 
-Starterでは、HTMLでプレビューするための機能を用意しました。
-便利なことに、原稿を変更すると自動的にリロードされます。
-PDFと比べてHTMLの生成はずっと高速なので、原稿執筆中に入力間違いを見つけるにはHTMLのほうが向いています。
+=={sec-basicsyntax} @<em>{PyVista}の特徴
 
-使い方は、まずWebサーバを起動します。
+@<em>{PyVista}は@<em>{numpy}や@<em>{matplotlib}のようなインターフェースを持った3次元データ可視化ライブラリです。
 
-//terminal[][Webサーバを起動する]{
-$ @<userinput>{rake web:server}          @<balloon>{Dockerを使っていない場合}
-$ @<userinput>{rake docker:web:server}   @<balloon>{Dockerを使っている場合}
+=== インポートする
+
+まずは@<em>{PyVista}を使用できるようにモジュールをインポートします。
+慣例として@<em>{PyVista}は@<em>{pv}としてインポートされるので覚えておきましょう。
+//list[][モジュールインポート][lang=python]{
+>>> import pyvista as pv
 //}
 
-起動したらブラウザで @<em>{http://localhost:9000/} にアクセスし、適当な章を開いてください。
-そして開いた章の原稿ファイル（@<file>{*.re}）を変更すると、ブラウザの画面が自動的にリロードされ、変更が反映されます。
+=== ファイルを読み込む
 
-原稿執筆中は、エディタのウィンドウの後ろにプレビュー画面が少し見えるようにするといいでしょう。
+ファイルを読み込むには@<em>{pyvista.read}を使用します。
+//list[][モジュールインポート][lang=python]{
+>>> m = pv.read("mfu.vtk")
+>>> print(m)
+UnstructuredGrid (0x7fafd288f400)
+  N Cells:      1
+  N Points:     2
+  X Bounds:     0.000e+00, 1.000e+01
+  Y Bounds:     0.000e+00, 0.000e+00
+  Z Bounds:     0.000e+00, 0.000e+00
+  N Arrays:     1
+//}
+@<em>{m}に2ポイントを持つセルが1個の非構造格子が設定されたことが分かります。
+また、前節で保存したデータ配列"U"が含まれることも確認できます。
+@<em>{0x7fafd288f400}の部分は実行するたびに異なります。
 
-いくつか注意点があります。
+=== 結果の表示
 
- * 表示はHTMLで行っているため、PDFでの表示とは差異があります。
-   執筆中はHTMLでプレビューし、区切りのいいところでPDFで表示を確認するといいでしょう。
- * 今のところ数式はプレビューできません。
- * 変更が反映されるのは、開いているページと対応した原稿ファイルが変更された場合だけです。
-   たとえば「@<file>{foo.html}」を開いているときに「@<file>{foo.re}」を変更するとプレビューに反映されますが、別の「@<file>{bar.re}」を変更しても反映されません。
- * 画面右上の「Rebuild and Reload」リンクをクリックすると、原稿ファイルが変更されていなくても強制的にコンパイルとリロードがされます。
- * 原稿ファイルに入力間違いがあった場合は、画面にエラーが表示されます。
-   エラー表示はあまり分かりやすくはないので、今後改善される予定です。
- * Webサーバを終了するには、Controlキーを押しながら「c」を押してください。
+@<em>{plot}メソッドを使用することにより結果を可視化することができます。
+
+//list[][可視化][lang=python]{
+>>> m.plot()
+//}
+
+先程計算した1次元のメッシュの結果が可視化されていることが分かります。
+@<m>$x = 10.0$で@<m>$U=5.0$の値となっていることを確認してください。
+
+//image[mfu][解析結果の表示][scale=1.0]
+
+1次元モデルを使用して@<em>{GetFEM}と@<em>{PyVista}の基礎的な使い方を習得できました。
+次の節では2次元モデルの解析をしてみましょう。
