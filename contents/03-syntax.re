@@ -36,7 +36,10 @@
 @<em>{numpy}を使うと次のように定義できます。
 
 //list[][メッシュの作成][lang=python]{
->>> X = np.linspace(0.0, 10000.0, 4 + 1)
+>>> b = 1.0 # mm
+>>> L = 10000.0 # mm
+>>> h = 1000.0 # mm
+>>> X = np.linspace(0.0, L, 4 + 1)
 >>> Y = np.linspace(0.0, 1000.0, 2 + 1)
 >>> mesh = gf.Mesh("cartesian", X, Y)
 >>> mesh.export_to_vtk("mesh.vtk", "ascii")
@@ -177,4 +180,32 @@ Trace 2 in getfem_models.cc, line 3307: Source term: generic source term assembl
 
 == 検証
 
-先端集中荷重を受ける3次元はりの変位の公式は以下で与えられます。
+先端集中荷重を受けるはりのたわみの公式は以下で与えられます。
+
+//texequation[][先端集中荷重を受けるはりのたわみの公式]{
+u = \dfrac{Px^3}{3EI}
+//}
+
+ここで、@<m>$P$は片持梁先端に与えられている荷重、@<m>$x$は自由端位置を@<m>$0$とした場合のたわみの計算位置を表します。
+はり要素の上部の変位が公式と一致していることを確認します。
+
+@<em>{matplotlib}を使用して解を描画してみましょう。
+
+//list[][公式の描画][lang=python]{
+>>> import matplotlib.pyplot as plt
+>>> fig = plt.figure()
+>>> ax = fig.add_subplot(111)
+>>> I = b*h**3/12.0
+>>> P = F*(b*h)
+>>> u = -(P/(E*I))*(X**3/6.0-L*X**2/2.0)
+>>> ax.plot(X, u, label="Theory")
+//}
+
+解析結果は@<em>{PyVista}のサンプリング機能を使うことによりデータを取得します。
+
+//list[][変位のサンプリング][lang=python]{
+>>> sampled = m.sample_over_line([0, h, 0], [L, h, 0], 4)
+>>> ax.plot(X, sampled["U"][:, 1], label="GetFEM")
+>>> plt.show()
+//}
+//image[U][変位の比較][scale=1.0]
