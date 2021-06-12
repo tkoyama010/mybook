@@ -1,4 +1,6 @@
-OBJS = ./contents/00-preface.re \
+OBJS = config.yml \
+       config-starter.yml \
+       ./contents/00-preface.re \
        ./contents/01-install.re \
        ./contents/02-tutorial.re \
        ./contents/03-syntax.re \

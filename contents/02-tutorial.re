@@ -1,4 +1,4 @@
-= @<em>{GetFEM}と@<em>{PyVista}の基礎
+= 1次元ばね要素解析
 
 //abstract{
 前の章では、@<em>{GetFEM}と@<em>{PyVista}のインストールを説明し、サンプルのスクリプトを実行しました。
@@ -151,7 +151,7 @@ END MESH STRUCTURE DESCRIPTION
 //}
 
 領域を指定して領域を定義することも可能です。
-@<em>{outer_faces_with_direction}は2つの点で定義されるBOX内にある面を取得します。
+@<em>{outer_faces_in_box}は2つの点で定義されるBOX内にある外面を取得します。
 @<m>$x = -1.0$から@<m>$x = 11.0$の範囲にある点を出力してみます。
 
 //list[][BOX内の面の取得][lang=python]{
@@ -473,7 +473,7 @@ VTKの詳しいフォーマットについてはXXXXを参照してください�
 === ファイルを読み込む
 
 ファイルを読み込むには@<em>{pyvista.read}を使用します。
-//list[][モジュールインポート][lang=python]{
+//list[][@<em>{PyVista}によるファイルの読み込み][lang=python]{
 >>> m = pv.read("mfu.vtk")
 >>> print(m)
 UnstructuredGrid (0x7fafd288f400)
