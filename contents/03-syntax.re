@@ -158,6 +158,7 @@ Trace 2 in getfem_models.cc, line 3307: Source term: generic source term assembl
 == 結果の可視化
 
 @<em>{PyVista}を使い結果を表示します。
+
 //list[][結果の可視化][lang=python]{
 >>> m = pv.read("mfu.vtk")
 >>> m.plot(cpos="xy")
