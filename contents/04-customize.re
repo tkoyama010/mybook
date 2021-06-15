@@ -69,3 +69,9 @@
 === 質量行列と剛性行列の作成
 
 質量行列と剛性行列を直接計算するには@<em>{asm_mass_matrix}と@<em>{asm_linear_elasticity}を使用します。
+
+//list[][質量行列の作成][lang=python]{
+//}
+
+//list[][剛性行列の作成][lang=python]{
+//}
