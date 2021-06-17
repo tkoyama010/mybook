@@ -1,7 +1,7 @@
 = 3次元はりの固有値解析
 
 //abstract{
-@<em>{GetFEM}を使用して3次元の片持ちはりの固有値解析を行います。
+@<em>{GetFEM}を使用して3次元はりの固有値解析を行います。
 初めての人は、先に@<secref>{02-tutorial|sec-basicsyntax}を見たほうがいいでしょう。
 //}
 
@@ -21,7 +21,7 @@
 >>> import numpy as np
 >>> import pyvista as pv
 //}
-
+)
 === @<em>{Mesh}オブジェクトを作成する
 
 まずは、@<em>{Mesh}オブジェクトを設定します。
@@ -31,9 +31,9 @@
 @<em>{numpy}を使うと次のように定義できます。
 
 //list[][メッシュの作成][lang=python]{
->>> X = np.linspace(0.0, 100.0, 4 + 1)
->>> Y = np.linspace(0.0, 100.0, 4 + 1)
->>> Z = np.linspace(0.0, 1000.0, 36 + 1)
+>>> X = np.linspace(0.0, 100.0, 2 + 1)
+>>> Y = np.linspace(0.0, 100.0, 2 + 1)
+>>> Z = np.linspace(0.0, 1000.0, 20 + 1)
 >>> mesh = gf.Mesh("cartesian", X, Y, Z)
 >>> mesh.export_to_vtk("mesh.vtk", "ascii")
 >>> m = pv.read("mesh.vtk")
@@ -53,7 +53,7 @@
 >>> mfu = gf.MeshFem(mesh, 3)
 >>> mfu.set_classical_fem(elements_degree)
 >>> mfd = gf.MeshFem(mesh, 1)
->>> mfu.set_classical_fem(elements_degree)
+>>> mfd.set_classical_fem(elements_degree)
 //}
 
 === @<em>{MeshIm}オブジェクトを作成する
@@ -63,7 +63,7 @@
 2次元の積分法を定義するには@<em>{IM_PRODUCT}を使用して1次元の積分法から2次元の積分法を作成します。
 
 //list[][@<em>{MeshIm}オブジェクトの作成][lang=python]{
->>> mim = gf.MeshIm(mesh, "IM_HEXAHEDRON(5)")
+>>> mim = gf.MeshIm(mesh, elements_degree*2)
 //}
 
 === 質量行列と剛性行列の作成
@@ -71,16 +71,32 @@
 質量行列と剛性行列を直接計算するには@<em>{asm_mass_matrix}と@<em>{asm_linear_elasticity}を使用します。
 
 //list[][質量行列の作成][lang=python]{
+>>> M = gf.asm_mass_matrix(mim, mfu)
 //}
 
 //list[][剛性行列の作成][lang=python]{
+>>> E = 205000.0 # N/mm2
+>>> Nu = 0.0
+>>> Lambda = E*Nu/((1+Nu)*(1-2*Nu))
+>>> Mu =E/(2*(1+Nu))
+>>> K = gf.asm_linear_elasticity(
+...     mim, mfu, mfd, np.repeat([Lambda], mfd.nbdof()), np.repeat(Mu, mfd.nbdof())
+... )
 //}
 
 === 固有値と固有モードの計算
 
 固有値と固有モードの計算には@<em>{numpy}を使用します。
 
-//list[][@<em>{numpy}][lang=python]{
+
+//list[][固有値と固有モードの計算][lang=python]{
+omega, v = np.linalg.eig(np.linalg.inv(M.full()) @ K.full())
+//}
+
+計算した固有値を@<em>{numpy.sort}でソートします。
+//list[][固有値と固有ベクトルのソート][lang=python]{
+omega_sort = np.sort(omega)
+sort_index = np.argsort(omega)
 //}
 
 //note[@<em>{numpy}と@<em>{scipy}の固有値と固有モードの計算について]{
@@ -92,7 +108,12 @@
 次に、解いた解を可視化する必要があります。
 固有ベクトルを配列としてVTKに出力します。
 
-//list[][解のエクスポート][lang=python]{
+固有モードを出力しプロットします。
+//list[][固有ベクトルの出力][lang=python]{
+>>> U = v[:, sort_index[6]].real
+>>> mfu.export_to_vtk("mfu.vtk", "ascii", mfu, U, "U")
+>>> m = pv.read("mfu.vtk")
+>>> m.plot()
 //}
 
 出力後、同じディレクトリにファイル@<em>{"mfu.vtk"}が出力されます。
@@ -101,7 +122,9 @@
 
 @<em>{PyVista}を使い結果を表示します。
 
-//list[][結果の可視化][lang=python]{
+//list[][モードによるワープ][lang=python]{
+>>> w = m.warp_by_vector("U", factor=1000.0)
+>>> w.plot()
 //}
 
 固有値から分かるように6次の固有値までは剛体モードを表します。
