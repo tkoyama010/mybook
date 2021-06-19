@@ -1,4 +1,3 @@
-#@# -*- coding: utf-8 -*-
 = PyVistaの紹介
 
 //abstract{
