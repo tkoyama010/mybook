@@ -425,6 +425,7 @@ XXXXエラーになったら、以下の点を確認してください。
 @<em>{GetFEM}には可視化機能はないため、外部の可視化ライブラリを使用する必要があります。
 今回は@<em>{PyVista}を使用するため@<em>{VTK}ファイルをエクスポートします。
 変数@<em>{u}の値は@<em>{variable}メソッドを使用して出力します。
+
 //list[][解のエクスポート][lang=python]{
 >>> U = md.variable("u")
 >>> print(U)
@@ -468,6 +469,7 @@ VTKの詳しいフォーマットについてはXXXXを参照してください�
 慣例として@<em>{PyVista}は@<em>{pv}としてインポートされるので覚えておきましょう。
 //list[][モジュールインポート][lang=python]{
 >>> import pyvista as pv
+>>> pv.start_xvfb()
 //}
 
 === ファイルを読み込む

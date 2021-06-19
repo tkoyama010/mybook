@@ -1,7 +1,7 @@
-= 2次元片持はり解析
+= 集中荷重を受ける2次元片持はりのたわみ解析
 
 //abstract{
-@<em>{GetFEM}を使用して2次元の片持ちはりを検討します。
+@<em>{GetFEM}を使用して2次元の片持ちはりの剛性方程式を解きます。
 初めての人は、先に@<secref>{02-tutorial|sec-basicsyntax}を見たほうがいいでしょう。
 //}
 
@@ -20,6 +20,7 @@
 >>> import getfem as gf
 >>> import numpy as np
 >>> import pyvista as pv
+>>> pv.start_xvfb()
 //}
 
 //note[単位について]{
@@ -158,6 +159,7 @@ Trace 2 in getfem_models.cc, line 3307: Source term: generic source term assembl
 == 結果の可視化
 
 @<em>{PyVista}を使い結果を表示します。
+
 //list[][結果の可視化][lang=python]{
 >>> m = pv.read("mfu.vtk")
 >>> m.plot(cpos="xy")

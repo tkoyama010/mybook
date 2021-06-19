@@ -64,7 +64,7 @@ starter:
   subsection_decoration: symbol
 
   ## プログラムやターミナルのキャプションを小さくするか？
-  caption_small: false
+  caption_small: true
 
   ## キャプションの見映えをよくするか？
   caption_pretty: true
