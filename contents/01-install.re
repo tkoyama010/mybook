@@ -1,50 +1,22 @@
-= 基本とインストール
+= 環境構築
 
 //abstract{
-まずは手元のパソコンで実装ができるような環境を整えていきましょう。
-
-この章では、Pythonの有限要素法実装のために必要となる「GetFEM」と「PyVista」のインストール方法を説明します。
-
-本書のインストールには @<em>{Ubuntu 20.04} を使用してください。
-@<em>{Ubuntu 20.04} のインストール自体については本書では扱いません。
+まずは実装ができるような環境を整えていきましょう。
+本書ではMyBinderという無料サービスを使用して有限要素法の実装を説明していきます。
 //}
 
 #@#//makechaptitlepage[toc=on]
 
+=== MyBinderの起動
+@<em>{MyBinder}は@<em>{JupyterLab}を無料で試せるサービスです。
+本書では@<href>{https://mybinder.org/v2/gh/getfem-doc/getfem-examples/master?urlpath=lab, こちら}の環境を使用します。
+URLにアクセスすると以下の画面に遷移します。
+//image[mybinder][@<em>{MyBinder}の起動][scale=1.0]
+しばらく待つと@<em>{JupyterLab}が起動します。
+@<em>{Python3}を起動すると@<em>{Notebook}が起動します。
+本書で紹介する@<em>{Python}コマンドはこの@<em>{Notebook}で実行してください。
 
-
-== GetFEMとPyVistaのインストール
-
-Pythonで有限要素法の実装をするには、GetFEMとPyVistaのインストールが必要です。
-
- * GetFEMとは有限要素法コードを実装するためのフレームワークのひとつです。
-   有限要素法のモデルを解くのに必要です。
- * PyVistaとは3次元可視化フレームワークのひとつです。
-   GetFEMの結果を可視化するのに必要です。
-
-これらのインストール手順を説明します。
-
-==== GetFEMのインストール
-
-LinuxがDebianおよびUbuntuディストリビューションの場合、公式リポジトリからインストールすることができます。
-以下のコマンドでインストールを行います。
-//terminal[][apt-getコマンドによるインストール]{
-$ @<userinput>{sudo apt-get install python3-getfem++}     @<balloon>{下線が引かれたコマンドだけを入力すること}
+//warning[使⽤上の注意]{
+本製品を⽯版にかざすと 、天空の城から雷が発射されます 。
+周りに⼈がいないことを確かめてから使⽤してください 。
 //}
-
-==== PyVistaのインストール
-
-以下のように、pipコマンドを入力するとPyVistaをインストールすることができます。
-//terminal[][pipコマンドによるインストール]{
-$ @<userinput>{pip install pyvista}     @<balloon>{下線が引かれたコマンドだけを入力すること}
-//}
-
-== サンプルファイルの実行
-
-GetFEMとPyVistaをインストールしたら、次のようにインポートができるか確認しましょう。
-//terminal[][pipコマンドによるインストール]{
-$ @<userinput>{python}
->>>import getfem as gf
->>>import pyvista as pv
-//}
-エラーなくインポートができれば完了です。

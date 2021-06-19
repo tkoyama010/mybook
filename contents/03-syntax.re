@@ -20,6 +20,7 @@
 >>> import getfem as gf
 >>> import numpy as np
 >>> import pyvista as pv
+>>> pv.start_xvfb()
 //}
 
 //note[単位について]{

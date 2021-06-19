@@ -469,6 +469,7 @@ VTKの詳しいフォーマットについてはXXXXを参照してください�
 慣例として@<em>{PyVista}は@<em>{pv}としてインポートされるので覚えておきましょう。
 //list[][モジュールインポート][lang=python]{
 >>> import pyvista as pv
+>>> pv.start_xvfb()
 //}
 
 === ファイルを読み込む
