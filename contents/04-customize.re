@@ -87,20 +87,37 @@
 === 固有値と固有モードの計算
 
 固有値と固有モードの計算には@<em>{numpy}を使用します。
+固有値解析の計算には時間がかかりますので根気強く待ってください。
 
 
 //list[][固有値と固有モードの計算][lang=python]{
-omega, v = np.linalg.eig(np.linalg.inv(M.full()) @ K.full())
+>>> omega2, v = np.linalg.eig(np.linalg.inv(M.full()) @ K.full())
 //}
 
 計算した固有値を@<em>{numpy.sort}でソートします。
 //list[][固有値と固有ベクトルのソート][lang=python]{
-omega_sort = np.sort(omega)
-sort_index = np.argsort(omega)
+>>> omega2_sort = np.sort(omega2)
+>>> sort_index = np.argsort(omega2)
+//}
+求めた固有値を出力します。
+出力から分かるように、モード 1-6 は固有値がほぼ<@m>{$0.0$}、すなわち固有円振動数が<em>{$0.0$}となっており、
+剛体モードが計算されていることが分かります。
+//list[][固有値の確認][lang=python]{
+>>> omega2_sort = np.sort(omega2)
+>>> print(omega2_sort[:10])
+[-2.96792735e-12+0.j  0.00000000e+00+0.j  1.67761410e-12+0.j
+  3.30174611e-12+0.j  7.96734349e-12+0.j  1.05152296e-11+0.j
+  8.03242476e-02+0.j  8.03242476e-02+0.j  5.52361001e-01+0.j
+  5.52361001e-01+0.j]
 //}
 
-//note[@<em>{numpy}と@<em>{scipy}の固有値と固有モードの計算について]{
-//}
+note[jの意味]{
+(TODO)
+}
+
+note[@<em>{numpy}と@<em>{scipy}の固有値と固有モードの計算について]{
+(TODO)
+}
 
 == 解のエクスポート
 
@@ -108,13 +125,14 @@ sort_index = np.argsort(omega)
 次に、解いた解を可視化する必要があります。
 固有ベクトルを配列としてVTKに出力します。
 
-固有モードを出力しプロットします。
+7次の固有モードを出力しプロットします。
 //list[][固有ベクトルの出力][lang=python]{
 >>> U = v[:, sort_index[6]].real
 >>> mfu.export_to_vtk("mfu.vtk", "ascii", mfu, U, "U")
 >>> m = pv.read("mfu.vtk")
 >>> m.plot()
 //}
+//image[mfu][モード図][scale=1.0]
 
 出力後、同じディレクトリにファイル@<em>{"mfu.vtk"}が出力されます。
 
@@ -127,10 +145,12 @@ sort_index = np.argsort(omega)
 >>> w.plot()
 //}
 
-固有値から分かるように6次の固有値までは剛体モードを表します。
+//image[mfu2][モード図][scale=1.0]
+
 
 == 検証
 
+(TODO)
 固有振動数を求める公式は下記の通りです。
 剛性を計算すると。
 となります。
