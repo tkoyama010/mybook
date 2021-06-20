@@ -22,7 +22,7 @@
 >>> import pyvista as pv
 >>> pv.start_xvfb()
 //}
-)
+
 === @<em>{Mesh}オブジェクトを作成する
 
 まずは、@<em>{Mesh}オブジェクトを設定します。

@@ -81,6 +81,9 @@ import numpy as np
 X = np.array([0.0, 10.0])
 mesh = gf.Mesh("cartesian", X)
 print(mesh)
+//}
+
+//output[][Meshオブジェクトの作成の表示結果]{
 
 BEGIN POINTS LIST
 
@@ -99,15 +102,6 @@ BEGIN MESH STRUCTURE DESCRIPTION
 
 END MESH STRUCTURE DESCRIPTION
 
-//}
-
-//output[][「@<code>|//output|」での表示結果（崩れない）]{
- id  |   name   | height | gender
------+----------+--------+--------
- 101 | エレン   |    170 | M
- 102 | ミカサ   |    170 | F
- 103 | アルミン |    163 | M
-(3 rows)
 //}
 
 出力結果からインデックス0の点が0.0にあり、インデックス1の点が10.0の位置にあることが分かります。
