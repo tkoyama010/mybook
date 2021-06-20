@@ -14,7 +14,7 @@ URLにアクセスすると以下の画面に遷移します。
 //image[mybinder][@<em>{Binder}の起動][scale=1.0]
 しばらく待つと@<em>{JupyterLab}が起動します。
 @<em>{Python3}を起動すると@<em>{Notebook}が起動します。
-本書で紹介する@<em>{Python}コマンドはこの@<em>{Notebook}で実行してください。
+本書で紹介する@<em>{Python}コマンドをこの@<em>{Notebook}のセルに入力して実行してください。
 
 //caution[一定時間操作がない場合]{
 @<em>{Binder}には制限があるため一定時間操作がないとセッションが終了します。
