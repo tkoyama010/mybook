@@ -1,4 +1,4 @@
-= 1次元ばね要素解析
+= 1次元解析
 
 //abstract{
 前の章では、実行環境の起動方法を説明しました。
@@ -8,6 +8,10 @@
 //}
 
 #@#//makechaptitlepage[toc=on]
+
+== ばね要素モデル
+
+(TODO)
 
 == 用語の説明
 
@@ -83,7 +87,7 @@ mesh = gf.Mesh("cartesian", X)
 print(mesh)
 //}
 
-//output[][Meshオブジェクトの作成の表示結果]{
+//output[][表示結果]{
 
 BEGIN POINTS LIST
 
@@ -111,7 +115,7 @@ END MESH STRUCTURE DESCRIPTION
 
 @<em>{Mesh}には@<em>{Model}オブジェクトのブリック(brick)を定義するために領域を定義する必要があります。
 今回は左端と右端に領域を定義しておきます。
-領域の定義には面番号が必要となるので取得します。
+領域の定義には面番号が必要となるのでまずはそれを取得します。
 面を取得するためには@<em>{outer_faces_with_direction}メソッドを使用します。
 このメソッドはベクトルとベクトルからの角度(rad)を指定してその範囲のベクトルを法線とする面を取得します。
 
@@ -119,12 +123,16 @@ END MESH STRUCTURE DESCRIPTION
 fb1 = mesh.outer_faces_with_direction([-1.0], 0.01)
 print(fb1)
 
+//}
+
+//output[][表示結果]{
+
 [[0]
  [1]]
 
 //}
 
-出力を見ると面番号は2行の配列で構成されています。
+出力を確認すると面番号は2行の配列で構成されています。
 1行目は凸(convex)のIDを、2行目は凸(convex)内の面番号を表しています。
 つまり、上の出力はIDが0の凸(convex)の面番号1を指定していることが分かります。
 左端と同様に右端の面番号も取得します。
@@ -133,14 +141,18 @@ print(fb1)
 fb2 = mesh.outer_faces_with_direction([1.0], 0.01)
 print(fb2)
 
+//}
+
+//output[][表示結果]{
+
 [[0]
  [0]]
 
 //}
 
-領域を指定して領域を定義することも可能です。
+今回は方向を指定して面を取得しましたが、領域を指定して面を取得することも可能です。
 @<em>{outer_faces_in_box}は2つの点で定義されるBOX内にある外面を取得します。
-@<m>$x = -1.0$から@<m>$x = 11.0$の範囲にある点を出力してみます。
+試しに、@<m>$x = -1.0$から@<m>$x = 11.0$の範囲にある点を出力してみます。
 
 //list[][BOX内の面の取得][lang=python]{
 print(mesh.outer_faces_in_box([-1.0], [11.0]))
@@ -447,7 +459,7 @@ LOOKUP_TABLE default
 VTKの詳しいフォーマットについてはXXXXを参照してください。
 @<m>$x = 10.0$で@<m>$U=5.0$の値となっていることが確認できます。
 
-=={sec-basicsyntax} @<em>{PyVista}の特徴
+=={sec-basicsyntax} @<em>{PyVista}による可視化
 
 @<em>{PyVista}は@<em>{numpy}や@<em>{matplotlib}のようなインターフェースを持った3次元データ可視化ライブラリです。
 
