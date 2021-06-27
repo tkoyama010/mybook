@@ -163,7 +163,7 @@ print(fb2)
 
 今回は方向を指定して面を取得しましたが、領域を指定して面を取得することも可能です。
 @<em>{outer_faces_in_box}は2つの点で定義されるBOX内にある外面を取得します。
-試しに、@<m>$x = -1.0$から@<m>$x = 11.0$の範囲にある点を表示してみます。
+試しに、@<m>$x = -1.0$から@<m>$x = 11.0$の範囲にある面を表示してみます。
 
 //list[][BOX内の面の取得][lang=python]{
 print(mesh.outer_faces_in_box([-1.0], [11.0]))
@@ -457,7 +457,7 @@ mfu.export_to_vtk("mfu.vtk", "ascii", mfu, U, "U")
 //}
 
 実行後、同じディレクトリにファイル@<em>{"mfu.vtk"}が保存されます。
-//list[][VTKファイルの内容][]{
+//output[][VTKファイルの内容][]{
 # vtk DataFile Version 2.0
 Exported by GetFEM
 ASCII
