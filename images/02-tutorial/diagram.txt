@@ -10,8 +10,8 @@ pattern thickness = 0.3pt,
 pattern radius/.store in=\mcRadius, 
 pattern radius = 1pt}
 \makeatletter
-\pgfutil@ifundefined{pgf@pattern@name@_gx0wkxhmb}{
-\pgfdeclarepatternformonly[\mcThickness,\mcSize]{_gx0wkxhmb}
+\pgfutil@ifundefined{pgf@pattern@name@_wvrbc25sq}{
+\pgfdeclarepatternformonly[\mcThickness,\mcSize]{_wvrbc25sq}
 {\pgfqpoint{0pt}{0pt}}
 {\pgfpoint{\mcSize+\mcThickness}{\mcSize+\mcThickness}}
 {\pgfpoint{\mcSize}{\mcSize}}
@@ -34,8 +34,8 @@ pattern thickness = 0.3pt,
 pattern radius/.store in=\mcRadius, 
 pattern radius = 1pt}
 \makeatletter
-\pgfutil@ifundefined{pgf@pattern@name@_incll9w32}{
-\pgfdeclarepatternformonly[\mcThickness,\mcSize]{_incll9w32}
+\pgfutil@ifundefined{pgf@pattern@name@_rfnq435dn}{
+\pgfdeclarepatternformonly[\mcThickness,\mcSize]{_rfnq435dn}
 {\pgfqpoint{0pt}{0pt}}
 {\pgfpoint{\mcSize+\mcThickness}{\mcSize+\mcThickness}}
 {\pgfpoint{\mcSize}{\mcSize}}
@@ -53,9 +53,9 @@ pattern radius = 1pt}
 %uncomment if require: \path (0,300); %set diagram left start at 0, and has height of 300
 
 %Shape: Rectangle [id:dp47389413387975177] 
-\draw  [draw opacity=0][pattern=_gx0wkxhmb,pattern size=3.75pt,pattern thickness=0.75pt,pattern radius=0pt, pattern color={rgb, 255:red, 0; green, 0; blue, 0}] (102,173) -- (598,173) -- (598,202) -- (102,202) -- cycle ;
+\draw  [draw opacity=0][pattern=_wvrbc25sq,pattern size=3.75pt,pattern thickness=0.75pt,pattern radius=0pt, pattern color={rgb, 255:red, 0; green, 0; blue, 0}] (102,173) -- (598,173) -- (598,202) -- (102,202) -- cycle ;
 %Shape: Rectangle [id:dp12488550563270029] 
-\draw  [draw opacity=0][pattern=_incll9w32,pattern size=3.75pt,pattern thickness=0.75pt,pattern radius=0pt, pattern color={rgb, 255:red, 0; green, 0; blue, 0}] (102,85) -- (134,85) -- (134,173) -- (102,173) -- cycle ;
+\draw  [draw opacity=0][pattern=_rfnq435dn,pattern size=3.75pt,pattern thickness=0.75pt,pattern radius=0pt, pattern color={rgb, 255:red, 0; green, 0; blue, 0}] (102,85) -- (134,85) -- (134,173) -- (102,173) -- cycle ;
 %Straight Lines [id:da13068825634886672] 
 \draw    (134,85) -- (134,173) ;
 %Straight Lines [id:da6797245240489156] 

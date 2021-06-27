@@ -1,0 +1,33 @@
+
+
+\tikzset{every picture/.style={line width=0.75pt}} %set default line width to 0.75pt        
+
+\begin{tikzpicture}[x=0.75pt,y=0.75pt,yscale=-1,xscale=1]
+%uncomment if require: \path (0,300); %set diagram left start at 0, and has height of 300
+
+%Shape: Cube [id:dp7976271605453302] 
+\draw   (50,152) -- (71,131) -- (573,131) -- (573,180) -- (552,201) -- (50,201) -- cycle ; \draw   (573,131) -- (552,152) -- (50,152) ; \draw   (552,152) -- (552,201) ;
+%Straight Lines [id:da2098635040642849] 
+\draw    (51,250) -- (549,250) ;
+\draw [shift={(551,250)}, rotate = 180] [color={rgb, 255:red, 0; green, 0; blue, 0 }  ][line width=0.75]    (10.93,-3.29) .. controls (6.95,-1.4) and (3.31,-0.3) .. (0,0) .. controls (3.31,0.3) and (6.95,1.4) .. (10.93,3.29)   ;
+\draw [shift={(51,250)}, rotate = 0] [color={rgb, 255:red, 0; green, 0; blue, 0 }  ][line width=0.75]    (0,5.59) -- (0,-5.59)(10.93,-3.29) .. controls (6.95,-1.4) and (3.31,-0.3) .. (0,0) .. controls (3.31,0.3) and (6.95,1.4) .. (10.93,3.29)   ;
+%Straight Lines [id:da1279448273641246] 
+\draw    (590,130) -- (590,175) ;
+\draw [shift={(590,177)}, rotate = 270] [color={rgb, 255:red, 0; green, 0; blue, 0 }  ][line width=0.75]    (10.93,-4.9) .. controls (6.95,-2.3) and (3.31,-0.67) .. (0,0) .. controls (3.31,0.67) and (6.95,2.3) .. (10.93,4.9)   ;
+\draw [shift={(590,128)}, rotate = 90] [color={rgb, 255:red, 0; green, 0; blue, 0 }  ][line width=0.75]    (10.93,-4.9) .. controls (6.95,-2.3) and (3.31,-0.67) .. (0,0) .. controls (3.31,0.67) and (6.95,2.3) .. (10.93,4.9)   ;
+%Straight Lines [id:da13679353014136297] 
+\draw    (571.41,196.59) -- (589.59,178.41) ;
+\draw [shift={(591,177)}, rotate = 495] [color={rgb, 255:red, 0; green, 0; blue, 0 }  ][line width=0.75]    (10.93,-4.9) .. controls (6.95,-2.3) and (3.31,-0.67) .. (0,0) .. controls (3.31,0.67) and (6.95,2.3) .. (10.93,4.9)   ;
+\draw [shift={(570,198)}, rotate = 315] [color={rgb, 255:red, 0; green, 0; blue, 0 }  ][line width=0.75]    (10.93,-4.9) .. controls (6.95,-2.3) and (3.31,-0.67) .. (0,0) .. controls (3.31,0.67) and (6.95,2.3) .. (10.93,4.9)   ;
+
+% Text Node
+\draw (278,225.4) node [anchor=north west][inner sep=0.75pt]    {$1000mm$};
+% Text Node
+\draw (580,202.4) node [anchor=north west][inner sep=0.75pt]    {$100mm$};
+% Text Node
+\draw (599,144.4) node [anchor=north west][inner sep=0.75pt]    {$100mm$};
+% Text Node
+\draw (125,166.4) node [anchor=north west][inner sep=0.75pt]    {$\rho =1.0\ kg/mm^{2} ,\ E=205000.0\ N/mm^{2} ,\ \nu =0.0$};
+
+
+\end{tikzpicture}
