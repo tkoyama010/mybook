@@ -9,13 +9,16 @@
 
 #@#//makechaptitlepage[toc=on]
 
-== ばね要素モデル
+== ばねモデル
 
-(TODO)
+それでは有限要素法の実装に必要なライブラリを実際に使ってみましょう。
+本節では図に示すような、一端が壁に固定されたばねを荷重@<m>$F=1.0N$で引っ張る問題を考えます。
+
+//image[diagram][モデル図][scale=1.0]
 
 == 用語の説明
 
-このあとの説明で使用する用語を紹介します。
+このあとの説明で使用する@<em>{GetFEM}に関する用語を紹介します。
 
 : @<em>{Model}オブジェクト
     @<em>{GetFEM}の中心となるオブジェクトです。全体剛性方程式を管理し解析を実行します。
@@ -24,7 +27,7 @@
     メッシュを管理するオブジェクトです。@<em>{GetFEM}は有限要素法の要素の種類と幾何情報が完全に分離されています。
 
 : 凸(convex)
-    メッシュを構成する要素です、要素と呼ばれることもありますが、本書では凸(convex)で統一します。
+    メッシュを構成する凸(convex)です、要素と呼ばれることもありますが、本書では凸(convex)で統一します。
 
 : 点
     凸(convex)を定義するするために定義される点です。点を複数結ぶことにより凸(convex)となります。
@@ -43,6 +46,8 @@
     ブリック(brick)の多くは弱形式言語(weak form language)で記述されており典型的な項は@<em>{Model}オブジェクトのメソッドとして定式化されています。
 
 == @<em>{GetFEM}の特徴
+
+(TODO) 図を追加する。
 
 ここでは@<em>{GetFEM}の大きな特徴を2つ紹介します。
 
@@ -87,7 +92,13 @@ mesh = gf.Mesh("cartesian", X)
 print(mesh)
 //}
 
-//output[][表示結果]{
+//note[単位について]{
+@<em>{GetFEM}内では単位の変換は行いません。
+単位系はユーザーが整合をとる必要があります。
+内部で変換は行わずそのまま微分方程式を解くため整合する単位を設定してください。
+//}
+
+//output[][出力結果]{
 
 BEGIN POINTS LIST
 
@@ -125,16 +136,16 @@ print(fb1)
 
 //}
 
-//output[][表示結果]{
+//output[][出力結果]{
 
 [[0]
  [1]]
 
 //}
 
-出力を確認すると面番号は2行の配列で構成されています。
+出力結果を確認すると面番号は2行の配列で構成されています。
 1行目は凸(convex)のIDを、2行目は凸(convex)内の面番号を表しています。
-つまり、上の出力はIDが0の凸(convex)の面番号1を指定していることが分かります。
+つまり、上の表示はIDが0の凸(convex)の面番号1を指定していることが分かります。
 左端と同様に右端の面番号も取得します。
 
 //list[][右端の面の取得][lang=python]{
@@ -143,7 +154,7 @@ print(fb2)
 
 //}
 
-//output[][表示結果]{
+//output[][出力結果]{
 
 [[0]
  [0]]
@@ -152,14 +163,17 @@ print(fb2)
 
 今回は方向を指定して面を取得しましたが、領域を指定して面を取得することも可能です。
 @<em>{outer_faces_in_box}は2つの点で定義されるBOX内にある外面を取得します。
-試しに、@<m>$x = -1.0$から@<m>$x = 11.0$の範囲にある点を出力してみます。
+試しに、@<m>$x = -1.0$から@<m>$x = 11.0$の範囲にある点を表示してみます。
 
 //list[][BOX内の面の取得][lang=python]{
 print(mesh.outer_faces_in_box([-1.0], [11.0]))
 
+//}
+
+//output[][出力結果]{
+
 [[0 0]
  [0 1]]
-
 
 //}
 
@@ -177,6 +191,10 @@ RIGHT = 2
 mesh.set_region(LEFT, fb1)
 mesh.set_region(RIGHT, fb2)
 print(mesh)
+
+//}
+
+//output[][出力結果]{
 
 BEGIN POINTS LIST
 
@@ -224,6 +242,10 @@ END REGION 2
 //list[][@<em>{MeshFem}オブジェクトの作成][lang=python]{
 mfu = gf.MeshFem(mesh, 1)
 print(mfu)
+
+//}
+
+//output[][出力結果]{
 BEGIN MESH_FEM
 
 QDIM 1
@@ -232,16 +254,19 @@ QDIM 1
 END MESH_FEM
 //}
 
-出力から分かるように、この時点では凸(convex)に@<em>{Fem}(有限要素法)オブジェクトは割り当てられていません。
+出力結果から分かるように、この時点では凸(convex)に@<em>{Fem}(有限要素法)オブジェクトは割り当てられていません。
 そのため、@<em>{Fem}(有限要素法)オブジェクトを作成して設定します。
 ここでは、一般的に使われている単体の古典的Lagrange要素(@<em>{"FEM_PK(1,1)"})を設定します。
 凸(convex)のIDを指定して設定することもできますが、今回は1要素ですので指定はしません。
-凸(convex)に@<em>{"FEM_PK(1,1)"}が設定されていることが分かります。
 
 //list[][@<em>{MeshFem}オブジェクトへの有限要素法の設定][lang=python]{
 f = gf.Fem("FEM_PK(1,1)")
 mfu.set_fem(f)
 print(mfu)
+
+//}
+
+//output[][出力結果]{
 
 BEGIN MESH_FEM
 
@@ -254,21 +279,17 @@ END MESH_FEM
 
 //}
 
+出力結果から、凸(convex)に@<em>{"FEM_PK(1,1)"}が設定されていることが分かります。
+
 //note[有限要素法の種類について]{
 
 通常の解析では単体の古典的Lagrange要素を使用します。
+そのため、簡単に古典的Lagrange要素を追加できる@<em>{set_classical_fem}メソッドが実装されています。
+今回の説明では直接定義をする方法を使用しましたが、今後はこのメソッドを使用します。
 
 //list[][@<em>{MeshFem}オブジェクトへの単体の古典的Lagrange要素の設定][lang=python]{
-mfu.set_fem(f)
-//}
-
-また、その他の有限要素法には次のものがあります。
-
-//table[tbl-31][サンプル表]{
-Name	Val1	Val2
---------------------
-AA	12	34
-BB	56	78
+element_degree = 1
+mfu.set_classical_fem(element_degree)
 //}
 
 //}
@@ -292,16 +313,9 @@ im = gf.Integ("IM_GAUSS1D(1)")
 mim = gf.MeshIm(mesh, im)
 //}
 
-//note[積分法の種類について]{
-
-また、その他の積分法には次のものがあります。
-
-//}
-
-次に剛性方程式を管理作成するための@<em>{Model}オブジェクトを作成します。
-
 === @<em>{Model}オブジェクトを作成する
 
+次に剛性方程式を管理作成するための@<em>{Model}オブジェクトを作成します。
 新しい@<em>{Model}オブジェクトを作成するには、次のようにします。
 
  - (1) @<em>{Model}オブジェクトを定義する。
@@ -323,7 +337,7 @@ md = gf.Model("real")
 ===== (2) 変数を定義する。
 
 変数を定義します。
-問題が解かれた際にはこの変数に解が出力されます。
+問題が解かれた際にはこの変数に解が保存されます。
 変数は@<em>{MeshFem}オブジェクトにリンクして定義します。
 メソッドは@<em>{add_fem_variable}を使用します。
 
@@ -334,11 +348,10 @@ md.add_fem_variable("u", mfu)
 ===== (3) ブリック(brick)を定義する。
 
 ブリック(brick)を定義します。
-今回は図XXXXに示すモデルを作成します。
-
+先ほどの@<img>{diagram}に示すモデルを作成します。
 このモデルを作成するために必要なブリックは以下の通りです。
 
- * 等方性線形弾性項
+ * 楕円項(ばね要素)
  * Dirichlet条件(固定条件)
  * ソース項(荷重条件)
 
@@ -348,10 +361,14 @@ md.add_fem_variable("u", mfu)
 k = 2.0
 md.add_initialized_data("k", [k])
 md.add_generic_elliptic_brick(mim, "u", "k")
+
+//}
+
+//output[][出力結果]{
 0
 //}
 
-出力された0はブリック(brick)のインデックスを表しています。
+出力結果の0はブリック(brick)のインデックスを表しています。
 
 次に、Dirichlet条件(固定条件)を追加します。
 Dirichlet条件は以下の式で表されます。
@@ -361,7 +378,7 @@ Hu = r
 ここで、@<m>$H$は(自由度)を次元とした行列、@<m>$u$と@<m>$r$はそれぞれ(自由度)を次元としたベクトルです。
 @<m>$u$は先程定義した変数を表しています。
 今回は左端が固定条件となっているため@<m>$u = {0}$を設定します。
-ゆえに、@<m>$H = [[0]]$および@<m>$r = \{0\}$となります。
+ゆえに、@<m>$H = [[1]]$および@<m>$r = \{0\}$となります。
 @<m>$H$と@<m>$r$は@<em>{add_initialized_data}メソッドを使用して固定サイズデータとして定義します。
 それぞれ@<em>{"H"}と@<em>{"r"}と名前をつけておき、@<em>{add_generalized_Dirichlet_condition_with_multipliers}メソッドでDirichlet条件を定義します。
 引数には@<em>{MeshIm}オブジェクトと@<em>{MeshFem}オブジェクトも必要です。
@@ -370,12 +387,16 @@ Hu = r
 md.add_initialized_data("H", [[1.0]])
 md.add_initialized_data("r", [0.0])
 md.add_generalized_Dirichlet_condition_with_multipliers(
-...     mim, "u", mfu, LEFT, "r", "H"
-... )
+    mim, "u", mfu, LEFT, "r", "H"
+)
+
+//}
+
+//output[][出力結果]{
 1
 //}
 
-出力された1はブリック(brick)のインデックスを表しています。
+出力結果の1はブリック(brick)のインデックスを表しています。
 
 最後にソース項(荷重条件)を追加します。
 使用するメソッドは@<em>{add_source_term_brick}メソッドを使用して荷重条件を追加します。
@@ -385,12 +406,15 @@ md.add_generalized_Dirichlet_condition_with_multipliers(
 F = mfu.eval("1.0")
 md.add_initialized_fem_data("F", mfu, F)
 md.add_source_term_brick(mim, "u", "F", RIGHT)
+//}
+
+//output[][出力結果]{
 Trace 2 in getfem_models.cc, line 4387: Mass term assembly for Dirichlet condition
 Trace 2 in getfem_models.cc, line 4424: Source term assembly for Dirichlet condition
 2
 //}
 
-ソース項はアセンブリングが必要となるためその情報が出力されます。
+ソース項はアセンブリングが必要となるため出力結果にはその情報が表示されます。
 2はブリック(brick)のインデックスを表しています。
 
 
@@ -399,6 +423,9 @@ Trace 2 in getfem_models.cc, line 4424: Source term assembly for Dirichlet condi
 モデルを定義したら、@<em>{solve}メソッドを使用して解くことができます。
 //list[][求解][lang=python]{
 md.solve()
+//}
+
+//output[][出力結果]{
 Trace 2 in getfem_models.cc, line 3464: Generic elliptic: generic matrix assembly
 Trace 2 in getfem_models.cc, line 4387: Mass term assembly for Dirichlet condition
 Trace 2 in getfem_models.cc, line 4424: Source term assembly for Dirichlet condition
@@ -406,17 +433,7 @@ Trace 2 in getfem_models.cc, line 3300: Generic source term assembly
 Trace 2 in getfem_models.cc, line 3307: Source term: generic source term assembly
 (0, 1)
 //}
-各項がアセンブリングされている旨のメッセージが出力されます。@<em>{(0, 1)}はXXXXX。
-
-==={subsec-compileerror} @<em>{solve}がエラーになったら
-
-XXXXエラーになったら、以下の点を確認してください。
-
- * AAAAA
- * BBBBB
- * CCCCC
-
-詳しくはXXXXXを見てください。
+各項がアセンブリングされている旨のメッセージが表示されます。
 
 == 解のエクスポート
 
@@ -424,16 +441,22 @@ XXXXエラーになったら、以下の点を確認してください。
 次に、解いた解を可視化する必要があります。
 @<em>{GetFEM}には可視化機能はないため、外部の可視化ライブラリを使用する必要があります。
 今回は@<em>{PyVista}を使用するため@<em>{VTK}ファイルをエクスポートします。
-変数@<em>{u}の値は@<em>{variable}メソッドを使用して出力します。
+変数@<em>{u}の値は@<em>{variable}メソッドを使用して表示します。
 
 //list[][解のエクスポート][lang=python]{
 U = md.variable("u")
 print(U)
+//}
+
+//output[][出力結果]{
 [0. 5.]
+//}
+
+//list[][解のエクスポート][lang=python]{
 mfu.export_to_vtk("mfu.vtk", "ascii", mfu, U, "U")
 //}
 
-出力後、同じディレクトリにファイル@<em>{"mfu.vtk"}が出力されます。
+実行後、同じディレクトリにファイル@<em>{"mfu.vtk"}が保存されます。
 //list[][VTKファイルの内容][]{
 # vtk DataFile Version 2.0
 Exported by GetFEM
@@ -456,8 +479,10 @@ SCALARS U float 1
 LOOKUP_TABLE default
  0 5
 //}
-VTKの詳しいフォーマットについてはXXXXを参照してください。
+VTKの詳しいフォーマットについては本書では説明しません。
 @<m>$x = 10.0$で@<m>$U=5.0$の値となっていることが確認できます。
+
+(TODO)解が一致していることを確認
 
 =={sec-basicsyntax} @<em>{PyVista}による可視化
 
@@ -471,6 +496,7 @@ VTKの詳しいフォーマットについてはXXXXを参照してください�
 import pyvista as pv
 pv.start_xvfb()
 //}
+(TODO)start_xvfbの説明
 
 === ファイルを読み込む
 
@@ -505,3 +531,8 @@ m.plot()
 
 1次元モデルを使用して@<em>{GetFEM}と@<em>{PyVista}の基礎的な使い方を習得できました。
 次の節では2次元モデルの解析をしてみましょう。
+
+//note[ファイルをエクスポートした可視化について]{
+ファイルをエクスポートして@<em>{PyVista}で可視化させるのは手間がかかります。
+@<em>{GetFEM}の@<em>{Mesh}オブジェクトや@<em>{MeshFem}オブジェクトに@<em>{plot}メソッドがあり直接可視化できれば便利ですが未実装です。
+//}

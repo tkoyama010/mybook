@@ -1,0 +1,85 @@
+
+
+% Pattern Info
+ 
+\tikzset{
+pattern size/.store in=\mcSize, 
+pattern size = 5pt,
+pattern thickness/.store in=\mcThickness, 
+pattern thickness = 0.3pt,
+pattern radius/.store in=\mcRadius, 
+pattern radius = 1pt}
+\makeatletter
+\pgfutil@ifundefined{pgf@pattern@name@_gx0wkxhmb}{
+\pgfdeclarepatternformonly[\mcThickness,\mcSize]{_gx0wkxhmb}
+{\pgfqpoint{0pt}{0pt}}
+{\pgfpoint{\mcSize+\mcThickness}{\mcSize+\mcThickness}}
+{\pgfpoint{\mcSize}{\mcSize}}
+{
+\pgfsetcolor{\tikz@pattern@color}
+\pgfsetlinewidth{\mcThickness}
+\pgfpathmoveto{\pgfqpoint{0pt}{0pt}}
+\pgfpathlineto{\pgfpoint{\mcSize+\mcThickness}{\mcSize+\mcThickness}}
+\pgfusepath{stroke}
+}}
+\makeatother
+
+% Pattern Info
+ 
+\tikzset{
+pattern size/.store in=\mcSize, 
+pattern size = 5pt,
+pattern thickness/.store in=\mcThickness, 
+pattern thickness = 0.3pt,
+pattern radius/.store in=\mcRadius, 
+pattern radius = 1pt}
+\makeatletter
+\pgfutil@ifundefined{pgf@pattern@name@_incll9w32}{
+\pgfdeclarepatternformonly[\mcThickness,\mcSize]{_incll9w32}
+{\pgfqpoint{0pt}{0pt}}
+{\pgfpoint{\mcSize+\mcThickness}{\mcSize+\mcThickness}}
+{\pgfpoint{\mcSize}{\mcSize}}
+{
+\pgfsetcolor{\tikz@pattern@color}
+\pgfsetlinewidth{\mcThickness}
+\pgfpathmoveto{\pgfqpoint{0pt}{0pt}}
+\pgfpathlineto{\pgfpoint{\mcSize+\mcThickness}{\mcSize+\mcThickness}}
+\pgfusepath{stroke}
+}}
+\makeatother
+\tikzset{every picture/.style={line width=0.75pt}} %set default line width to 0.75pt        
+
+\begin{tikzpicture}[x=0.75pt,y=0.75pt,yscale=-1,xscale=1]
+%uncomment if require: \path (0,300); %set diagram left start at 0, and has height of 300
+
+%Shape: Rectangle [id:dp47389413387975177] 
+\draw  [draw opacity=0][pattern=_gx0wkxhmb,pattern size=3.75pt,pattern thickness=0.75pt,pattern radius=0pt, pattern color={rgb, 255:red, 0; green, 0; blue, 0}] (102,173) -- (598,173) -- (598,202) -- (102,202) -- cycle ;
+%Shape: Rectangle [id:dp12488550563270029] 
+\draw  [draw opacity=0][pattern=_incll9w32,pattern size=3.75pt,pattern thickness=0.75pt,pattern radius=0pt, pattern color={rgb, 255:red, 0; green, 0; blue, 0}] (102,85) -- (134,85) -- (134,173) -- (102,173) -- cycle ;
+%Straight Lines [id:da13068825634886672] 
+\draw    (134,85) -- (134,173) ;
+%Straight Lines [id:da6797245240489156] 
+\draw [line width=0.75]    (530,140) -- (594,140) ;
+\draw [shift={(596,140)}, rotate = 180] [color={rgb, 255:red, 0; green, 0; blue, 0 }  ][line width=0.75]    (10.93,-3.29) .. controls (6.95,-1.4) and (3.31,-0.3) .. (0,0) .. controls (3.31,0.3) and (6.95,1.4) .. (10.93,3.29)   ;
+%Shape: Spring [id:dp593516296317234] 
+\draw   (160,140) .. controls (161.25,130) and (165,120) .. (172.5,120) .. controls (187.5,120) and (187.5,160) .. (182.5,160) .. controls (177.5,160) and (177.5,120) .. (192.5,120) .. controls (207.5,120) and (207.5,160) .. (202.5,160) .. controls (197.5,160) and (197.5,120) .. (212.5,120) .. controls (227.5,120) and (227.5,160) .. (222.5,160) .. controls (217.5,160) and (217.5,120) .. (232.5,120) .. controls (247.5,120) and (247.5,160) .. (242.5,160) .. controls (237.5,160) and (237.5,120) .. (252.5,120) .. controls (267.5,120) and (267.5,160) .. (262.5,160) .. controls (257.5,160) and (257.5,120) .. (272.5,120) .. controls (287.5,120) and (287.5,160) .. (282.5,160) .. controls (277.5,160) and (277.5,120) .. (292.5,120) .. controls (307.5,120) and (307.5,160) .. (302.5,160) .. controls (297.5,160) and (297.5,120) .. (312.5,120) .. controls (327.5,120) and (327.5,160) .. (322.5,160) .. controls (317.5,160) and (317.5,120) .. (332.5,120) .. controls (347.5,120) and (347.5,160) .. (342.5,160) .. controls (337.5,160) and (337.5,120) .. (352.5,120) .. controls (367.5,120) and (367.5,160) .. (362.5,160) .. controls (357.5,160) and (357.5,120) .. (372.5,120) .. controls (387.5,120) and (387.5,160) .. (382.5,160) .. controls (377.5,160) and (377.5,120) .. (392.5,120) .. controls (407.5,120) and (407.5,160) .. (402.5,160) .. controls (397.5,160) and (397.5,120) .. (412.5,120) .. controls (427.5,120) and (427.5,160) .. (422.5,160) .. controls (417.5,160) and (417.5,120) .. (432.5,120) .. controls (447.5,120) and (447.5,160) .. (442.5,160) .. controls (437.5,160) and (437.5,120) .. (452.5,120) .. controls (467.5,120) and (467.5,160) .. (462.5,160) .. controls (457.5,160) and (457.5,120) .. (472.5,120) .. controls (487.5,120) and (487.5,160) .. (482.5,160) .. controls (477.5,160) and (477.5,120) .. (492.5,120) .. controls (500,120) and (503.75,130) .. (505,140) ;
+%Straight Lines [id:da40587187577812567] 
+\draw    (136,139) -- (159,139) ;
+%Straight Lines [id:da7429568396198776] 
+\draw    (507,140) -- (530,140) ;
+%Shape: Circle [id:dp7854997367016083] 
+\draw  [fill={rgb, 255:red, 255; green, 255; blue, 255 }  ,fill opacity=1 ] (128,139) .. controls (128,135.41) and (130.91,132.5) .. (134.5,132.5) .. controls (138.09,132.5) and (141,135.41) .. (141,139) .. controls (141,142.59) and (138.09,145.5) .. (134.5,145.5) .. controls (130.91,145.5) and (128,142.59) .. (128,139) -- cycle ;
+%Shape: Circle [id:dp601099922108417] 
+\draw  [fill={rgb, 255:red, 255; green, 255; blue, 255 }  ,fill opacity=1 ] (523.5,140) .. controls (523.5,136.41) and (526.41,133.5) .. (530,133.5) .. controls (533.59,133.5) and (536.5,136.41) .. (536.5,140) .. controls (536.5,143.59) and (533.59,146.5) .. (530,146.5) .. controls (526.41,146.5) and (523.5,143.59) .. (523.5,140) -- cycle ;
+%Straight Lines [id:da2286294670195772] 
+\draw    (134,173) -- (598,173) ;
+
+% Text Node
+\draw (289,91.4) node [anchor=north west][inner sep=0.75pt]    {$k=2.0N/mm$};
+% Text Node
+\draw (107,131) node [anchor=north west][inner sep=0.75pt]   [align=left] {壁};
+% Text Node
+\draw (525,93.4) node [anchor=north west][inner sep=0.75pt]    {$F=1.0N$};
+
+
+\end{tikzpicture}
