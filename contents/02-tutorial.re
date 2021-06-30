@@ -494,9 +494,15 @@ VTKの詳しいフォーマットについては本書では説明しません�
 慣例として@<em>{PyVista}は@<em>{pv}としてインポートされるので覚えておきましょう。
 //list[][モジュールインポート][lang=python]{
 import pyvista as pv
-pv.start_xvfb()
+pv.start_xvfb() # ローカルのPythonで実行する場合は省略してください。
 //}
-(TODO)start_xvfbの説明
+
+//caution[start_xvfb関数について]{
+@<em>{start_xvfb}関数は仮想フレームバッファ@<em>{Xvfb}を起動する関数です。
+@<em>{Xvfb}は、画面出力ができない環境でグラフィカル操作するサーバです。
+@<em>{Binder}には画面出力環境がないためこの関数を実行する必要があります。
+ローカルの@<em>{Python}で実行する際は画面に出力させるため省略してください。
+//}
 
 === ファイルを読み込む
 

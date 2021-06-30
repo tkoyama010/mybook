@@ -14,14 +14,14 @@ $ @<userinput>{docker pull getfemdoc/getfem}
 //}
 
 
-== GetFEMとPyVistaのインストール
+== @<em>{GetFEM}と@<em>{PyVista}のインストール
 
 本書のインストールには @<em>{Ubuntu 20.04} を使用してください。
 @<em>{Ubuntu 20.04} のインストール自体については本書では扱いません。
 
 これらのインストール手順を説明します。
 
-==== GetFEMのインストール
+==== @<em>{GetFEM}のインストール
 
 LinuxがDebianおよびUbuntuディストリビューションの場合、公式リポジトリからインストールすることができます。
 以下のコマンドでインストールを行います。
@@ -29,20 +29,19 @@ LinuxがDebianおよびUbuntuディストリビューションの場合、公式
 $ @<userinput>{sudo apt-get install python3-getfem++}     @<balloon>{下線が引かれたコマンドだけを入力すること}
 //}
 
-==== PyVistaのインストール
+==== @<em>{PyVista}のインストール
 
-以下のように、pipコマンドを入力するとPyVistaをインストールすることができます。
+以下のように、pipコマンドを入力すると@<em>{PyVista}をインストールすることができます。
 //terminal[][pipコマンドによるインストール]{
 $ @<userinput>{pip install pyvista}     @<balloon>{下線が引かれたコマンドだけを入力すること}
 //}
 
-== サンプルファイルの実行
+== インポートの確認
 
-GetFEMとPyVistaをインストールしたら、次のようにインポートができるか確認しましょう。
+@<em>{GetFEM}と@<em>{PyVista}をインストールしたら、次のようにインポートができるか確認しましょう。
 //terminal[][pipコマンドによるインストール]{
 $ @<userinput>{python}
 >>>import getfem as gf
 >>>import pyvista as pv
 //}
 エラーなくインポートができれば完了です。
-(TODO)

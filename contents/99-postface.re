@@ -25,7 +25,7 @@
 
 ===[notoc] 既刊一覧
 
- * 『@<hlink>{https://tkoyama010.booth.pm/items/1044807/, GetFEM++使用者文書}』（技術書典6）
+ * 『@<hlink>{https://tkoyama010.booth.pm/items/1044807/, GetFEM++使用者文書}』（技術書典5）
  * 『@<hlink>{https://tkoyama010.booth.pm/items/1304104/, はじめてのGetFEM++}』（技術書典6）
  * 『@<hlink>{https://tkoyama010.booth.pm/items/1574241/, GetFEM++Pythonインターフェース}』（技術書典7）
  * 『@<hlink>{https://tkoyama010.booth.pm/items/1727985/, Mayavi： 3D scientific data visualization and plotting in Python Japanese Edition}』（第二回技術書同人誌博覧会 (技書博)）
