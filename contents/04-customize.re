@@ -108,7 +108,6 @@ sort_index = np.argsort(omega2)
 表示から分かるように、モード 1-6 は固有値が微小値、すなわち固有角振動数の2乘が @<m>$0.0$ となっており、
 剛体モードが計算されていることが分かります。
 //list[][固有値の確認][lang=python]{
-omega2_sort = np.sort(omega2)
 print(omega2_sort[:10])
 //}
 
@@ -129,6 +128,8 @@ print(f1.real, "Hz")
 0.04510695023261866 Hz
 //}
 
+この節の固有値解析の方法は@<href>{https://watlab-blog.com/2019/06/30/multidof-vibration-eigen/, こちらのページ}を参考にさせていただきました。
+
 == 解のエクスポート
 
 以上で固有値解析が解けました。
@@ -136,15 +137,19 @@ print(f1.real, "Hz")
 固有ベクトルを配列としてVTKに表示します。
 
 7次の固有モードを表示しプロットします。
-//list[][固有ベクトルの表示][lang=python]{
+//list[][固有モードの出力][lang=python]{
 U = v[:, sort_index[6]].real
 mfu.export_to_vtk("mfu.vtk", "ascii", mfu, U, "U")
+//}
+
+同じディレクトリにファイル@<em>{"mfu.vtk"}が表示されます。
+出力したファイルを読み込み固有モードをプロットさせます。
+
+//list[][固有モードの表示][lang=python]{
 m = pv.read("mfu.vtk")
 m.plot()
 //}
 //image[mfu][モード図][scale=1.0]
-
-表示後、同じディレクトリにファイル@<em>{"mfu.vtk"}が表示されます。
 
 == 結果の可視化
 
@@ -155,7 +160,7 @@ w = m.warp_by_vector("U", factor=1000.0)
 w.plot()
 //}
 
-//image[mfu2][モード図][scale=1.0]
+//image[mfu2][モード図(変形後)][scale=1.0]
 
 
 == 検証
@@ -184,4 +189,75 @@ f =  0.046540250939535864 Hz
 求めた固有振動数ははりの固有振動数と有効数字1桁目が一致していることが分かります。
 ソリッド要素を使用してはりをモデル化しているため完全には一致しません。
 
-(TODO) @<em>{numpy}と@<em>{scipy}の固有値と固有モードの計算について
+
+== scipyによる疎行列固有値解析
+
+@<em>{numpy} で固有値解析をしましたが、使用しているソルバーは密行列のものです。
+しかし、有限要素法で扱う行列は疎行列であるため、疎行列のソルバーを使用するほうがより効率的です。
+この節の固有値解析の方法は @<href>{https://mapdldocs.pyansys.com/examples/01-apdlmath-examples/mapdl_vs_scipy.html, こちらのページ} を参考にさせていただきました。
+
+//list[][モジュールインポート][lang=python]{
+from scipy import io 
+from scipy.sparse.linalg import eigsh
+import matplotlib.pyplot as plt
+//}
+
+@<em>{GetFEM} で @<em>{scipy} の疎行列固有値解析をするには剛性行列 @<m>{K} と 質量行列 @<m>{M} をMatrix-Market形式で出力しておきます。
+先ほど作成した行列は @<em>{GetFEM} の @<em>{Spmat} オブジェクトで作成されており、Matrix-Market形式で保存するには @<em>{save} メソッドを使用します。
+@<href>{https://math.nist.gov/MatrixMarket/formats.html, Matrix-Market形式} は疎行列を表現するためのテキスト形式の1つです。
+
+//list[][Matrix-Market形式への出力][lang=python]{
+K.save("mm", "K.mtx")
+M.save("mm", "M.mtx")
+//}
+
+Matrix-Market形式で出力されたファイルは @<em>{scipy.io.mmread} を使用して読み込むことが可能です。
+読み込み後、 @<em>{matplotlib} の @<em>{spy} メソッドを使用して疎行列の非ゼロ要素を可視化します。
+剛性行列 @<m>{K} と 質量行列 @<m>{M} がいずれも疎行列であることが確認できます。
+
+//list[][剛性行列 @<m>{K} と 質量行列 @<m>{M} の描画][lang=python]{
+pk = io.mmread("K.mtx")
+pm = io.mmread("M.mtx")
+
+fig, (ax1, ax2) = plt.subplots(1, 2)
+fig.suptitle("K and M Matrix profiles")
+ax1.spy(pk, markersize=0.01)
+ax1.set_title("K Matrix")
+ax2.spy(pm, markersize=0.01)
+ax2.set_title("M Matrix")
+plt.show(block=True)
+//}
+
+//image[matrix][行列の描画][scale=1.0]
+
+@<em>{scipy} の @<em>{eigsh} で疎行列の一般化固有値解析を行うことができます。
+@<em>{sigma} を設定するとその付近の固有値を求めます。
+@<m>{0.00} 付近の固有値を求めたいため @<m>{-0.0001} を設定します。
+
+//list[][疎行列の固有値と固有モードの計算][lang=python]{
+vals, vecs = eigsh(A=pk, M=pm, k=10, sigma=-0.0001, which="LA")
+//}
+
+固有値を確認すると @<em>{numpy} で計算した結果と一致します。
+
+//list[][固有値の確認][lang=python]{
+print(vals)
+//}
+
+//output[][出力結果]{
+array([3.88741096e-14, 1.17108119e-13, 1.40025727e-13,
+       2.06940002e-13, 3.00736934e-13, 3.12765317e-13,
+       8.03242475e-02, 8.03242475e-02, 5.52361001e-01,
+       5.52361001e-01])
+//}
+
+1次固有振動数を計算します。
+
+//list[][1 次固有振動数の確認][lang=python]{
+f1 = np.sqrt(vals[6])/(2.0*np.pi)
+print(f1.real, "Hz")
+//}
+
+//output[][出力結果]{
+0.045106950231340426 Hz
+//}

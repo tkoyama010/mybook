@@ -173,7 +173,7 @@ m = pv.read("mfu.vtk")
 m.plot(cpos="xy")
 //}
 
-//image[mfu][変位コンター図][scale=0.5]
+//image[mfu][変位コンター図][scale=1.0]
 
 コンター図から分かるように固定端である左端は0.0であり荷重を加えた右端の変位が最大になっていることが分かります。
 コンターのみでは変位の様子が分からないため
@@ -184,7 +184,7 @@ w = m.warp_by_vector("U", factor=100.0)
 w.plot(cpos="xy")
 //}
 
-//image[mfu2][変形図(変位は100倍)][scale=0.5]
+//image[mfu2][変形図(変位は100倍)][scale=1.0]
 
 片持はりの自由端に荷重が与えられた際の変形の様子を確認することができます。
 
@@ -210,7 +210,7 @@ U = sampled["U"][:, 1]
 ax.plot(X, U, label="GetFEM")
 //}
 
-@<em>{matplotlib}を使用して公式と比較して描画してみましょう。
+@<em>{matplotlib}を使用して公式と比較したものを@<img>{U}に示します。
 有限要素法の解と公式の解が一致していることが分かります。
 
 //list[][公式の描画][lang=python]{
@@ -222,4 +222,4 @@ ax.legend()
 plt.show()
 //}
 
-//image[U][変位の比較][scale=0.7]
+//image[U][変位の比較][scale=1.0]
