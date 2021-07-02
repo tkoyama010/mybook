@@ -38,10 +38,25 @@ $ @<userinput>{pip install pyvista}     @<balloon>{下線が引かれたコマ�
 
 == インポートの確認
 
-@<em>{GetFEM}と@<em>{PyVista}をインストールしたら、次のようにインポートができるか確認しましょう。
+@<em>{GetFEM} と @<em>{PyVista} をインストールしたら、次のようにインポートができるか確認しましょう。
 //terminal[][pipコマンドによるインストール]{
 $ @<userinput>{python}
->>>import getfem as gf
->>>import pyvista as pv
+>>> import getfem as gf
+>>> import pyvista as pv
 //}
 エラーなくインポートができれば完了です。
+@<em>{PyVista} の @<em>{Hello World} を実行してみましょう。
+//terminal[][PyVistaのHello World!]{
+$ @<userinput>{python}
+>>> cyl = pv.Cylinder()
+>>> arrow = pv.Arrow()
+>>> sphere = pv.Sphere()
+>>> p = pv.Plotter(shape=(1, 3))
+>>> p.subplot(0, 0)
+>>> p.add_mesh(cyl, color="tan", show_edges=True)
+>>> p.subplot(0, 1)
+>>> p.add_mesh(arrow, color="tan", show_edges=True)
+>>> p.subplot(0, 2)
+>>> p.add_mesh(sphere, color="tan", show_edges=True)
+>>> p.show()
+//}
