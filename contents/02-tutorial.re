@@ -1,4 +1,4 @@
-= 1次元解析
+={sec-basicsyntax} 1次元解析
 
 //abstract{
 前の章では、実行環境の起動方法を説明しました。
@@ -12,13 +12,13 @@
 == ばねモデル
 
 それでは有限要素法の実装に必要なライブラリを実際に使ってみましょう。
-本節では図に示すような、一端が壁に固定されたばねを荷重@<m>$F=1.0N$で引っ張る問題を考えます。
+本節では @<img>{diagram} に示す、一端が壁に固定されたばね定数 @<m>$k = 2.0N/mm$ のばねを荷重 @<m>$F=1.0N$ で引っ張る問題を考えます。
 
 //image[diagram][モデル図][scale=1.0]
 
 == 用語の説明
 
-このあとの説明で使用する@<em>{GetFEM}に関する用語を紹介します。
+このあとの説明で使用する @<em>{GetFEM} に関する用語を紹介します。
 
 : @<em>{Model}オブジェクト
     @<em>{GetFEM}の中心となるオブジェクトです。全体剛性方程式を管理し解析を実行します。
@@ -47,17 +47,17 @@
 
 == @<em>{GetFEM}の特徴
 
-(TODO) 図を追加する。
+//image[class][GetFEMのクラス][scale=0.75]
 
 ここでは@<em>{GetFEM}の大きな特徴を2つ紹介します。
 
-1つ目はメッシュと有限要素法と積分法のオブジェクトが完全に分離されていることです。
-図に示すように@<em>{Mesh}(メッシュ)オブジェクトと@<em>{Fem}(有限要素法)オブジェクトと@<em>{Integ}(積分法)オブジェクトは完全に分離されいます。
+1つ目はメッシュと有限要素法と積分法のクラスが完全に分離されていることです。
+@<img>{class}に示すように@<em>{Mesh}(メッシュ)クラスと@<em>{Fem}(有限要素法)クラスと@<em>{Integ}(積分法)クラスは完全に分離されいます。
 これには利点があります。
 例えば、3種類のメッシュ形状と3種類の有限要素法と3種類の積分法がそれぞれ存在した場合、
 通常の有限要素法プログラムでは全ての組み合わせに対応した@<m>{3 \times 3 \times 3 = 27}種類の要素を個別に開発する必要があります。
-しかし、独立していればそれらのオブジェクトを組み合わせることで実装の手間を省くことができます。
-新しい有限要素法の手法や積分法を追加したいとき、@<em>{Fem}(有限要素法)オブジェクトや@<em>{Integ}(積分法)オブジェクトに追加するだけでよいのです。
+しかし、独立していればそれらのクラスを組み合わせることで実装の手間を省くことができます。
+新しい有限要素法の手法や積分法を追加したいとき、@<em>{Fem}(有限要素法)クラスや@<em>{Integ}(積分法)クラスに追加するだけでよいのです。
 
 2つ目は弱形式言語(weak form language)による自動モデリング機能が実装されていることです。
 有限要素法では微分方程式を弱定式化して離散化します。
@@ -83,11 +83,11 @@ import numpy as np
 === @<em>{Mesh}オブジェクトを作成する
 
 まずは、@<em>{Mesh}オブジェクトを設定します。
-今回は長さ10.0の1次元のメッシュを作成します。
+今回は長さ1.0の1次元のメッシュを作成します。
 規則的なメッシュはコンストラクタで@<em>{"cartesian"}コマンドを使用することで作成できます。
 
 //list[][Meshオブジェクトの作成][lang=python]{
-X = np.array([0.0, 10.0])
+X = np.array([0.0, 1.0])
 mesh = gf.Mesh("cartesian", X)
 print(mesh)
 //}
@@ -104,7 +104,7 @@ BEGIN POINTS LIST
 
   POINT COUNT 2
   POINT  0  0
-  POINT  1  10
+  POINT  1  1
 
 END POINTS LIST
 
@@ -163,10 +163,10 @@ print(fb2)
 
 今回は方向を指定して面を取得しましたが、領域を指定して面を取得することも可能です。
 @<em>{outer_faces_in_box}は2つの点で定義されるBOX内にある外面を取得します。
-試しに、@<m>$x = -1.0$から@<m>$x = 11.0$の範囲にある面を表示してみます。
+試しに、@<m>$x = -1.0$から@<m>$x = 1.0$の範囲にある面を表示してみます。
 
 //list[][BOX内の面の取得][lang=python]{
-print(mesh.outer_faces_in_box([-1.0], [11.0]))
+print(mesh.outer_faces_in_box([-1.0], [1.0]))
 
 //}
 
@@ -200,7 +200,7 @@ BEGIN POINTS LIST
 
   POINT COUNT 2
   POINT  0  0
-  POINT  1  10
+  POINT  1  1
 
 END POINTS LIST
 
@@ -337,7 +337,7 @@ md = gf.Model("real")
 ===== (2) 変数を定義する。
 
 変数を定義します。
-問題が解かれた際にはこの変数に解が保存されます。
+剛性方程式が解かれた際にはこの変数に解が保存されます。
 変数は@<em>{MeshFem}オブジェクトにリンクして定義します。
 メソッドは@<em>{add_fem_variable}を使用します。
 
@@ -371,7 +371,7 @@ md.add_generic_elliptic_brick(mim, "u", "k")
 出力結果の0はブリック(brick)のインデックスを表しています。
 
 次に、Dirichlet条件(固定条件)を追加します。
-Dirichlet条件は以下の式で表されます。
+Dirichlet条件は @<eq>{dirichlet} で表されます。
 //texequation[dirichlet][Dirichlet条件]{
 Hu = r
 //}
@@ -418,22 +418,44 @@ Trace 2 in getfem_models.cc, line 4424: Source term assembly for Dirichlet condi
 2はブリック(brick)のインデックスを表しています。
 
 
-=== 求解
+=== 剛性方程式を解く
+
+剛性方程式を解く前に意図したブリック(brick)が全て追加されていることを確認しましょう。
+モデルオブジェクトに追加されているブリックのリストは@<em>{brick_list}メソッドで確認することができます。
+
+//list[][ブリック(brick)の確認][lang=python]{
+print(md.brick_list())
+//}
+
+//output[][出力結果]{
+message from gf_model_get follow:
+List of model bricks:
+Brick   0     Generic elliptic
+ concerned variables: u.
+ brick with 1 term
+Brick   1 Dirichlet with multipliers brick
+ concerned variables: u, mult_on_u.
+ brick with 1 term
+Brick   2          Source term
+ concerned variables: u.
+ brick with 1 term
+
+None
+//}
+
+//caution[出力結果が異なる場合]{
+出力結果が異なる場合、ブリックの追加の過不足がありますので再度確認してください。
+//}
 
 モデルを定義したら、@<em>{solve}メソッドを使用して解くことができます。
-//list[][求解][lang=python]{
+
+//list[][剛性方程式を解く][lang=python]{
 md.solve()
 //}
 
 //output[][出力結果]{
-Trace 2 in getfem_models.cc, line 3464: Generic elliptic: generic matrix assembly
-Trace 2 in getfem_models.cc, line 4387: Mass term assembly for Dirichlet condition
-Trace 2 in getfem_models.cc, line 4424: Source term assembly for Dirichlet condition
-Trace 2 in getfem_models.cc, line 3300: Generic source term assembly
-Trace 2 in getfem_models.cc, line 3307: Source term: generic source term assembly
 (0, 1)
 //}
-各項がアセンブリングされている旨のメッセージが表示されます。
 
 == 解のエクスポート
 
@@ -449,7 +471,7 @@ print(U)
 //}
 
 //output[][出力結果]{
-[0. 5.]
+[0.  0.5]
 //}
 
 //list[][解のエクスポート][lang=python]{
@@ -464,7 +486,7 @@ ASCII
 DATASET UNSTRUCTURED_GRID
 POINTS 2 float
  0 0 0
- 10 0 0
+ 1 0 0
 
 CELLS 1 3
  2 0 1
@@ -477,14 +499,32 @@ POINT_DATA 2
 
 SCALARS U float 1
 LOOKUP_TABLE default
- 0 5
+ 0 0.5
 //}
 VTKの詳しいフォーマットについては本書では説明しません。
-@<m>$x = 10.0$で@<m>$U=5.0$の値となっていることが確認できます。
+@<m>$x = 1.0$ で @<m>$U=0.5$ の値となっていることが確認できます。
 
-(TODO)解が一致していることを確認
+== 検証
 
-=={sec-basicsyntax} @<em>{PyVista}による可視化
+Hookeの法則からばねによる反力 @<m>$F$ とバネの伸び @<m>$U$ の間には @<eq>{hooke} が成り立ちます。
+
+//texequation[hooke][Hookeの法則]{
+F = k U
+//}
+
+@<eq>{hooke} からばねの伸びの計算をしてみます。
+出力結果が @<em>{GetFEM} の結果と一致していることが分かります。
+
+//list[ばねの伸びの計算][][lang=python]{
+U = F / k
+print(U[1])
+//}
+
+//output[][出力結果]{
+0.5
+//}
+
+== @<em>{PyVista}による可視化
 
 @<em>{PyVista}は@<em>{numpy}や@<em>{matplotlib}のようなインターフェースを持った3次元データ可視化ライブラリです。
 
@@ -510,6 +550,9 @@ pv.start_xvfb() # ローカルのPythonで実行する場合は省略してく�
 //list[][@<em>{PyVista}によるファイルの読み込み][lang=python]{
 m = pv.read("mfu.vtk")
 print(m)
+//}
+
+//output[][出力結果]{
 UnstructuredGrid (0x7fafd288f400)
   N Cells:      1
   N Points:     2
@@ -531,16 +574,13 @@ m.plot()
 //}
 
 先程計算した1次元のメッシュの結果が可視化されていることが分かります。
-@<m>$x = 10.0$で@<m>$U=5.0$の値となっていることを確認してください。
+@<m>$x = 1.0$で@<m>$U=0.5$の値となっていることを確認してください。
+以上で、1次元モデルを使用して@<em>{GetFEM}と@<em>{PyVista}の基礎的な使い方を習得できました。
+次の節では2次元モデルの解析をしてみましょう。
 
 //image[mfu][解析結果の表示][scale=1.0]
-
-1次元モデルを使用して@<em>{GetFEM}と@<em>{PyVista}の基礎的な使い方を習得できました。
-次の節では2次元モデルの解析をしてみましょう。
 
 //note[ファイルをエクスポートした可視化について]{
 ファイルをエクスポートして@<em>{PyVista}で可視化させるのは手間がかかります。
 @<em>{GetFEM}の@<em>{Mesh}オブジェクトや@<em>{MeshFem}オブジェクトに@<em>{plot}メソッドがあり直接可視化できれば便利ですが未実装です。
 //}
-
-(TODO) 距離の影響があることを説明する。

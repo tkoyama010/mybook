@@ -10,7 +10,7 @@
 === @<em>{Binder}の起動
 @<em>{Binder}は@<em>{JupyterLab}を無料で試せるサービスです。
 本書では@<href>{https://mybinder.org/v2/gh/getfem-doc/getfem-examples/master?urlpath=lab, こちら}の環境を使用します。
-URLにアクセスすると以下の画面に遷移します。
+URLにアクセスすると@<img>{mybinder}の画面に遷移します。
 //image[mybinder][@<em>{Binder}の起動][scale=1.0]
 しばらく待つと@<em>{JupyterLab}が起動します。
 @<em>{Python3}を起動すると@<em>{Notebook}が起動します。

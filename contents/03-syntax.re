@@ -25,7 +25,7 @@
 import getfem as gf
 import numpy as np
 import pyvista as pv
-pv.start_xvfb()
+pv.start_xvfb() # ローカルのPythonで実行する場合は省略してください。
 //}
 
 
@@ -190,9 +190,9 @@ w.plot(cpos="xy")
 
 == 検証
 
-先端集中荷重を受けるはりのたわみの公式は以下で与えられます。
+先端集中荷重を受けるはりのたわみの公式は @<eq>{beam} で与えられます。
 
-//texequation[][先端集中荷重を受けるはりのたわみの公式]{
+//texequation[beam][先端集中荷重を受けるはりのたわみの公式]{
 u = \dfrac{Px^3}{3EI}
 //}
 

@@ -2,7 +2,7 @@
 
 //abstract{
 @<em>{GetFEM}を使用して3次元はりの固有値解析を行います。
-初めての人は、先に@<secref>{02-tutorial|sec-basicsyntax}を見たほうがいいでしょう。
+初めての人は、先に@<chapref>{02-tutorial}を見てください。
 //}
 
 #@#//makechaptitlepage[toc=on]
@@ -24,7 +24,7 @@
 import getfem as gf
 import numpy as np
 import pyvista as pv
-pv.start_xvfb()
+pv.start_xvfb() # ローカルのPythonで実行する場合は省略してください。
 //}
 
 === @<em>{Mesh}オブジェクトを作成する
@@ -105,7 +105,7 @@ omega2_sort = np.sort(omega2)
 sort_index = np.argsort(omega2)
 //}
 求めた固有値を表示します。
-表示から分かるように、モード 1-6 は固有値がほぼ @<m>$0.0$ 、すなわち固有角振動数の2乘が @<m>$0.0$ となっており、
+表示から分かるように、モード 1-6 は固有値が微小値、すなわち固有角振動数の2乘が @<m>$0.0$ となっており、
 剛体モードが計算されていることが分かります。
 //list[][固有値の確認][lang=python]{
 omega2_sort = np.sort(omega2)
@@ -128,8 +128,6 @@ print(f1.real, "Hz")
 //output[][出力結果]{
 0.04510695023261866 Hz
 //}
-
-(TODO) @<em>{numpy}と@<em>{scipy}の固有値と固有モードの計算について
 
 == 解のエクスポート
 
@@ -183,5 +181,7 @@ print("f = ", f, "Hz")
 //output[][出力結果]{
 f =  0.046540250939535864 Hz
 //}
-求めた固有振動数ははりの固有振動数とほぼ一致していることが分かります。
+求めた固有振動数ははりの固有振動数と有効数字1桁目が一致していることが分かります。
 ソリッド要素を使用してはりをモデル化しているため完全には一致しません。
+
+(TODO) @<em>{numpy}と@<em>{scipy}の固有値と固有モードの計算について
