@@ -1,16 +1,7 @@
 = ローカルでの環境構築方法
 
 //abstract{
-@<em>{GetFEM}のソースをコンパイルする方法について解説します。
-//}
-
-== Dockerを使った方法
-
-Dockerの使い方が分かる人は、@<href>{https://hub.docker.com/r/getfemdoc/getfem/, getfemdoc/getfem}のDockerイメージを使ってください。
-これで@<em>{GetFEM}と@<em>{PyVista}の両方が使えるようになります。
-
-//terminal[][Dockerイメージのダウンロードと動作確認]{
-$ @<userinput>{docker pull getfemdoc/getfem}
+@<em>{GetFEM}と@<em>{PyVista}をローカルにインストールする方法について説明します。
 //}
 
 
@@ -19,11 +10,9 @@ $ @<userinput>{docker pull getfemdoc/getfem}
 本書のインストールには @<em>{Ubuntu 20.04} を使用してください。
 @<em>{Ubuntu 20.04} のインストール自体については本書では扱いません。
 
-これらのインストール手順を説明します。
-
 ==== @<em>{GetFEM}のインストール
 
-LinuxがDebianおよびUbuntuディストリビューションの場合、公式リポジトリからインストールすることができます。
+@<em>{GetFEM} は @<em>{Ubuntu 20.04} の公式リポジトリからインストールすることができます。
 以下のコマンドでインストールを行います。
 //terminal[][apt-getコマンドによるインストール]{
 $ @<userinput>{sudo apt-get install python3-getfem++}     @<balloon>{下線が引かれたコマンドだけを入力すること}
@@ -39,24 +28,19 @@ $ @<userinput>{pip install pyvista}     @<balloon>{下線が引かれたコマ�
 == インポートの確認
 
 @<em>{GetFEM} と @<em>{PyVista} をインストールしたら、次のようにインポートができるか確認しましょう。
-//terminal[][pipコマンドによるインストール]{
+
+//terminal[][@<em>{GetFEM} と @<em>{PyVista} のインポートの確認]{
 $ @<userinput>{python}
 >>> import getfem as gf
 >>> import pyvista as pv
 //}
+
 エラーなくインポートができれば完了です。
-@<em>{PyVista} の @<em>{Hello World} を実行してみましょう。
-//terminal[][PyVistaのHello World!]{
+また、 @<em>{python3-getfem++} パッケージをインストールすると依存関係から @<em>{python3-numpy} と @<em>{python3-scipy} もインストールされます。
+こちらもインポートできるか確認しておきましょう。
+
+//terminal[][@<em>{numpy} と @<em>{scipy} のインポートの確認]{
 $ @<userinput>{python}
->>> cyl = pv.Cylinder()
->>> arrow = pv.Arrow()
->>> sphere = pv.Sphere()
->>> p = pv.Plotter(shape=(1, 3))
->>> p.subplot(0, 0)
->>> p.add_mesh(cyl, color="tan", show_edges=True)
->>> p.subplot(0, 1)
->>> p.add_mesh(arrow, color="tan", show_edges=True)
->>> p.subplot(0, 2)
->>> p.add_mesh(sphere, color="tan", show_edges=True)
->>> p.show()
+>>> import numpy as np
+>>> import scipy as sp
 //}
