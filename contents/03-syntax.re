@@ -2,7 +2,7 @@
 
 //abstract{
 @<em>{GetFEM}を使用して2次元の片持ちはりの剛性方程式を解きます。
-初めての人は、先に前の章を見たほうがいいでしょう。
+初めての人は先に@<chapref>{02-tutorial}を見てください。
 //}
 
 #@#//makechaptitlepage[toc=on]
@@ -31,11 +31,11 @@ pv.start_xvfb() # ローカルのPythonで実行する場合は省略してく�
 
 === @<em>{Mesh}オブジェクトを作成する
 
-まずは、@<em>{Mesh}オブジェクトを設定します。
-今回は四角形の規則的なメッシュを作成するためにコンストラクタで@<em>{"cartesian"}コマンドを使用します。
-このコマンドは@<em>{x}座標と@<m>{y}座標の座標値を指定するとその点に節点をもつメッシュを作成します。
-今回は@<em>{x}方向に長さ@<m>{10000.0}mmを4分割したメッシュを作成し、@<em>{y}方向に長さ@<m>{1000.0}mmを2分割したメッシュを作成します。
-@<em>{numpy}を使うと次のように定義できます。
+次に、 @<em>{Mesh} オブジェクトを定義します。
+今回は四辺形の規則的なメッシュを作成するためにコンストラクタで @<em>{"cartesian"} コマンドを使用します。
+@<chapref>{02-tutorial} では @<m>{x} 方向のみを指定して1次元のメッシュを作成しましたが、ここでは @<m>{x} 座標と @<m>{y} 座標の座標値を指定して作成します。
+今回は @<m>{x} 方向に長さ @<m>{10000.0} mmを4分割、 @<m>{y} 方向に長さ @<m>{1000.0} mmを2分割したメッシュを作成します。
+@<em>{numpy} を使うと次のように定義できます。
 
 //list[][メッシュの作成][lang=python]{
 b = 1.0 # mm
@@ -51,13 +51,9 @@ m.plot(show_edges="True", cpos="xy")
 
 //image[mesh][メッシュの作成][scale=1.0]
 
-//note[より複雑な@<em>{Mesh}オブジェクトの作成]{
-@<em>{GetFEM}内のメッシャーは実験的なもののみであるため。
-//}
-
-今回も左端と右端に領域を設定しておきます。
-前節と同様に@<em>{outer_faces_with_direction}メソッドを使用して領域を設定します。
-//list[][領域の設定][lang=python]{
+今回も左端と右端に領域を定義します。
+前節と同様に@<em>{outer_faces_with_direction}メソッドを使用して領域を定義します。
+//list[][領域の定義][lang=python]{
 fb1 = mesh.outer_faces_with_direction([-1.0, 0.0], 0.01)
 fb2 = mesh.outer_faces_with_direction([1.0, 0.0], 0.01)
 LEFT = 1
@@ -68,8 +64,8 @@ mesh.set_region(RIGHT, fb2)
 
 === @<em>{MeshFem}オブジェクトを作成する
 
-@<em>{MeshFem}オブジェクトを作成します。
-2次元有限要素法を定義する場合は@<em>{FEM_PRODUCT}を使用して1次元の有限要素法から2次元の有限要素法を作成します。
+2自由度の @<em>{MeshFem} オブジェクトを作成します。
+今回は2次の古典的Lagrange法を使用します。
 
 //list[][@<em>{MeshFem}オブジェクトの作成][lang=python]{
 mfu = gf.MeshFem(mesh, 2)
@@ -80,7 +76,7 @@ mfu.set_classical_fem(elements_degree)
 === @<em>{MeshIm}オブジェクトを作成する
 
 2次要素の場合、ガウス積分点は3を使用することが多いです。
-@<em>{IM_GAUSS1D(K)}は、@<m>$K/2+1$点の積分点を表します。
+@<em>{IM_GAUSS1D(K)} は、 @<m>$K$ 次の積分点を持つ1次元の積分法を表します。
 2次元の積分法を定義するには@<em>{IM_PRODUCT}を使用して1次元の積分法から2次元の積分法を作成します。
 
 //list[][@<em>{MeshIm}オブジェクトの作成][lang=python]{
@@ -144,7 +140,7 @@ Trace 2 in getfem_models.cc, line 4424: Source term assembly for Dirichlet condi
 
 === 求解
 
-以上で、モデルが定義できましたので@<em>{solve}メソッドで解を求め、結果を保存します。
+以上で、モデルが定義できましたので@<em>{solve}メソッドで解を求めます。
 
 //list[][求解][lang=python]{
 md.solve()
@@ -159,7 +155,7 @@ Trace 2 in getfem_models.cc, line 3307: Source term: generic source term assembl
 (0, 1)
 //}
 
-//list[][VTKへの出力][lang=python]{
+//list[][VTKファイルへの出力][lang=python]{
 U = md.variable("u")
 mfu.export_to_vtk("mfu.vtk", "ascii", mfu, U, "U")
 //}
@@ -175,10 +171,10 @@ m.plot(cpos="xy")
 
 //image[mfu][変位コンター図][scale=1.0]
 
-コンター図から分かるように固定端である左端は0.0であり荷重を加えた右端の変位が最大になっていることが分かります。
+コンター図から分かるように固定端である左端は0.0であり荷重を加えた右端の変位が最大になっていることが分かります(@<img>{mfu})。
 コンターのみでは変位の様子が分からないため
 @<href>{https://tkoyama010.github.io/pyvista-docs-dev-ja/core/filters.html#pyvista.DataSetFilters.warp_by_vector, @<em>{warp_by_vector}}
-メソッドで変位ベクトルでメッシュをワープさせてみます。
+メソッドで変位ベクトルでメッシュをワープさせてみます(@<img>{mfu2})。
 //list[][変位によるワープ][lang=python]{
 w = m.warp_by_vector("U", factor=100.0)
 w.plot(cpos="xy")
@@ -196,10 +192,12 @@ w.plot(cpos="xy")
 u = \dfrac{Px^3}{3EI}
 //}
 
-ここで、 @<m>$P$ は片持梁先端に与えられている荷重、 @<m>$x$ は自由端位置を @<m>$0$ とした場合のたわみの計算位置を表します。
-
-解析結果は@<em>{PyVista}のサンプリング機能を使うことによりデータを取得します。
-はり要素の上部の変位をプロットしてみます。
+ここで、 @<m>$P$ は片持はり先端に与えられている荷重、 @<m>$x$ は自由端位置を @<m>$0$ とした場合のたわみの計算位置を表します。
+解析結果は @<em>{PyVista} のサンプリング機能を使うことによりデータを取得します。
+@<href>{https://tkoyama010.github.io/pyvista-docs-dev-ja/api/core/_autosummary/_autosummary/pyvista.DataSetFilters.sample_over_line.html#pyvista.DataSetFilters.sample_over_line, @<em>{sample_over_line} メソッド}で開始点と終了点を指定するとサンプルデータを取得できます。
+はり要素の上部の @<em>{Y} 方向の変位をプロットしてみます。
+@<em>{matplotlib}を使用して公式と比較した結果を@<img>{U}に示します。
+有限要素法の解と公式の解が一致していることが分かります。
 
 //list[][変位のサンプリング][lang=python]{
 import matplotlib.pyplot as plt
@@ -209,9 +207,6 @@ sampled = m.sample_over_line([0, h, 0], [L, h, 0], 4)
 U = sampled["U"][:, 1]
 ax.plot(X, U, label="GetFEM")
 //}
-
-@<em>{matplotlib}を使用して公式と比較したものを@<img>{U}に示します。
-有限要素法の解と公式の解が一致していることが分かります。
 
 //list[][公式の描画][lang=python]{
 I = b*h**3/12.0

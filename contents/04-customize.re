@@ -2,7 +2,7 @@
 
 //abstract{
 @<em>{GetFEM}を使用して3次元はりの固有値解析を行います。
-初めての人は、先に@<chapref>{02-tutorial}を見てください。
+初めての人は先に@<chapref>{02-tutorial}を見てください。
 //}
 
 #@#//makechaptitlepage[toc=on]
@@ -10,7 +10,7 @@
 
 == はりの固有値解析
 
-固有値解析の対象のモデルは下図に示すような3次元両端自由端のはりを対象とします。
+下図に示すような3次元両端自由端のはりを対象とします。
 //image[diagram][モデル図][scale=1.0]
 
 == モデルの作成
@@ -53,6 +53,7 @@ m.plot(show_edges="True")
 === @<em>{MeshFem}オブジェクトを作成する
 
 @<em>{MeshFem}オブジェクトを作成します。
+3次の自由度を定義し要素次数は2次とします。
 
 //list[][@<em>{MeshFem}オブジェクトの作成][lang=python]{
 elements_degree = 2
@@ -65,16 +66,30 @@ mfd.set_classical_fem(elements_degree)
 === @<em>{MeshIm}オブジェクトを作成する
 
 @<em>{MeshIm}オブジェクトはコンストラクタを使用して作成します。
+出力結果から3次元の各方向に @<em>{IM_GAUSS1D(4)} の積分法が定義されていることが分かります。
 
 //list[][@<em>{MeshIm}オブジェクトの作成][lang=python]{
 mim = gf.MeshIm(mesh, elements_degree*2)
+print(mim)
+//}
+
+//output[][出力結果]{
+BEGIN MESH_IM
+
+ CONVEX 0 'IM_PRODUCT(IM_PRODUCT(IM_GAUSS1D(4),IM_GAUSS1D(4)),IM_GAUSS1D(4))'
+ CONVEX 1 'IM_PRODUCT(IM_PRODUCT(IM_GAUSS1D(4),IM_GAUSS1D(4)),IM_GAUSS1D(4))'
+                              中略
+ CONVEX 78 'IM_PRODUCT(IM_PRODUCT(IM_GAUSS1D(4),IM_GAUSS1D(4)),IM_GAUSS1D(4))'
+ CONVEX 79 'IM_PRODUCT(IM_PRODUCT(IM_GAUSS1D(4),IM_GAUSS1D(4)),IM_GAUSS1D(4))'
+
+END MESH_IM
 //}
 
 === 質量行列と剛性行列の作成
 
-有限要素法モデルの振動方程式は @<eq>{vibration} で与えられます。
+有限要素法モデルの運動方程式は @<eq>{vibration} で与えられます。
 
-//texequation[vibration][振動方程式]{
+//texequation[vibration][運動方程式]{
 \boldsymbol{M}\dfrac{d^{2}\boldsymbol{u}}{dt^{2}}+\boldsymbol{C}\dfrac{d\boldsymbol{u}}{dt}+\boldsymbol{K}\boldsymbol{u}=\boldsymbol{f}\left(t\right)
 //}
 
@@ -82,21 +97,21 @@ mim = gf.MeshIm(mesh, elements_degree*2)
 また、 @<m>$t$ は時刻、 @<m>$\boldsymbol{u}$ は変位ベクトル、 @<m>$\boldsymbol{f}\left(t\right)$ は外力ベクトルを表します。
 減衰および外力のない自由振動の場合、運動方程式は @<eq>{free} で与えられます。
 
-//texequation[free][自由振動]{
+//texequation[free][自由振動の場合の運動方程式]{
 \boldsymbol{M}\dfrac{d^{2}\boldsymbol{u}}{dt^{2}}+\boldsymbol{K}\boldsymbol{u}=\boldsymbol{0}
 //}
 
 ここで、変位の解を @<m>$\boldsymbol{u}=\boldsymbol{\Phi}\exp\left(i\omega t\right)$ と仮定します。
-ただし、 @<m>$\boldsymbol{\Phi}$ は固有モード @<m>$\omega$ は固有角振動数を表します。
-@<eq>{free} に代入して @<m>$\exp\left(i\omega t\right)$ を約分すると @<eq>{mode} になります。
+ただし、 @<m>$\boldsymbol{\Phi}$ は固有モード、 @<m>$\omega$ は固有角振動数を表します。
+@<eq>{free} に代入して @<m>$\exp\left(i\omega t\right)$ を約分すると @<eq>{mode} が導かれます。
 
-//texequation[mode][固有モードと固有角振動数]{
+//texequation[mode][固有モードと固有角振動数の一般化固有値問題]{
 \boldsymbol{K}\boldsymbol{\Phi}=\omega^{2}\boldsymbol{M}\boldsymbol{\Phi}
 //}
 
-ここで、両辺に @<m>$\boldsymbol{M}$ の逆行列をかけると @<eq>{eigen} のように固有値と固有ベクトルの定義式と同型になります。
+ここで、両辺に @<m>$\boldsymbol{M}$ の逆行列をかけると @<eq>{eigen} のように固有値問題と同型になります。
 
-//texequation[eigen][固有値と固有ベクトルの計算]{
+//texequation[eigen][固有モードと固有角振動数の固有値問題]{
 \left(\boldsymbol{M}^{-1}\boldsymbol{K}\right)\boldsymbol{\Phi}=\omega^{2}\boldsymbol{\Phi}
 //}
 
@@ -120,13 +135,12 @@ K = gf.asm_linear_elasticity(mim, mfu, mfd, Lambdas, Mus)
 === 固有値と固有モードの計算
 
 固有値と固有モードの計算には@<href>{https://numpy.org/doc/stable/reference/generated/numpy.linalg.eigh.html#numpy.linalg.eigh, @<em>{numpy.linalg.eig}}を使用します。
-また、この節の固有値解析の方法は@<href>{https://watlab-blog.com/2019/06/30/multidof-vibration-eigen/, こちらのページ}を参考にさせていただきました。
+この節の固有値解析の方法は@<href>{https://watlab-blog.com/2019/06/30/multidof-vibration-eigen/, こちらのページ}を参考にさせていただきました。
 逆行列と固有値解析の計算には時間がかかりますので根気強く待ってください。
-求めた質量行列と剛性行列は対称行列となっています。
 
 //list[][固有値と固有モードの計算][lang=python]{
 A = np.linalg.inv(M.full()) @ K.full()
-omega2, v = np.linalg.eig(A)
+omega2, vecs = np.linalg.eig(A)
 //}
 
 求めた固有値は値の大きさで並べられていないためソートをする必要があります。
@@ -137,7 +151,7 @@ sort_index = np.argsort(omega2)
 //}
 求めた固有値を出力します。
 出力結果から分かるように、モード 1-6 は固有値が微小値、すなわち固有角振動数の2乘が @<m>$0.0$ となっており、
-剛体モードが計算されていることが分かります。
+剛体モードとなっていることが分かります。
 //list[][固有値の確認][lang=python]{
 print(omega2_sort[:10])
 //}
@@ -149,7 +163,7 @@ print(omega2_sort[:10])
   5.52361001e-01+0.j]
 //}
 
-求めた固有値 @<m>{\lambda}は固有角振動数の2乘のため固有振動数との間には以下の式が成り立ちます。
+求めた固有値 @<m>{\lambda} は固有角振動数の2乘のため、固有振動数との間には以下の式が成り立ちます。
 
 //texequation[mode][固有振動数]{
 f_{1}=\dfrac{\omega_{1}}{2\pi}=\dfrac{\sqrt{\lambda_{1}}}{2\pi}
@@ -170,15 +184,12 @@ print(f1.real, "Hz")
 
 以上で固有値解析が解けました。
 次に、固有ベクトルを可視化します。
-固有ベクトルを配列としてVTKに表示します。
-7次の固有モードを表示しプロットします。
+固有ベクトルは2次元配列として計算されているため、該当する列をVTKに出力します。
 
 //list[][固有モードの出力][lang=python]{
-U = v[:, sort_index[6]].real
+U = vecs[:, sort_index[6]].real
 mfu.export_to_vtk("mfu.vtk", "ascii", mfu, U, "U")
 //}
-
-同じディレクトリにファイル@<em>{"mfu.vtk"}が作成されます。
 
 == 結果の可視化
 
@@ -201,13 +212,14 @@ w.plot()
 
 == 検証
 
-両端自由のはりの固有振動数@<m>$f$は次の式で計算できます。
-固有振動数を求める式は下記の通りです(「日本機械学会編：機械工学便覧，基礎編 a2 機械力学，丸善， 2007」より)。
-//texequation[dirichlet][両端自由のはりの固有振動数]{
+両端自由のはりの固有振動数 @<m>$f$ は @<eq>{beam} で計算できます。
+(「日本機械学会編：機械工学便覧，基礎編 a2 機械力学，丸善， 2007」より)
+//texequation[beam][両端自由のはりの固有振動数]{
 f=\dfrac{1}{2\pi}\dfrac{\lambda^{2}}{l^{2}}\sqrt{\dfrac{EI}{\rho A}}
 //}
 となります。
 ただし、1次の場合は @<m>$\lambda = 4.730$ です。
+また、 @<m>$l$ ははりの長さ、 @<m>$I$ は断面二次モーメント、 @<m>$A$ ははりの断面積を表します。
 この式を使用して今回の振動数との比較をしてみましょう。
 //list[][1次固有振動数の計算][lang=python]{
 L = 1000.0
@@ -238,7 +250,7 @@ from scipy.sparse.linalg import eigsh
 import matplotlib.pyplot as plt
 //}
 
-@<em>{GetFEM} で @<em>{scipy} の疎行列固有値解析をするには剛性行列 @<m>{K} と 質量行列 @<m>{M} をMatrix-Market形式で出力しておきます。
+@<em>{GetFEM} で @<em>{scipy} の疎行列固有値解析をするには剛性行列 @<m>$\boldsymbol{K}$ と 質量行列 @<m>$\boldsymbol{M}$ をMatrix-Market形式で出力します。
 @<href>{https://math.nist.gov/MatrixMarket/formats.html, Matrix-Market形式} は疎行列を表現するためのテキスト形式の1つです。
 先ほど作成した行列は @<em>{GetFEM} の @<em>{Spmat} オブジェクトで作成されており、Matrix-Market形式で保存するには @<em>{save} メソッドを使用します。
 
@@ -249,7 +261,7 @@ M.save("mm", "M.mtx")
 
 Matrix-Market形式で出力されたファイルは @<em>{scipy.io.mmread} を使用して読み込むことが可能です。
 読み込み後、 @<em>{matplotlib} の @<em>{spy} メソッドを使用して疎行列の非ゼロ要素を可視化します。
-剛性行列 @<m>{K} と 質量行列 @<m>{M} がいずれも疎行列であることが確認できます。
+剛性行列 @<m>$\boldsymbol{K}$ と @<m>$\boldsymbol{M}$ がいずれも疎行列であることが確認できます(@<img>{matrix})。
 
 //list[][剛性行列 @<m>{K} と 質量行列 @<m>{M} の描画][lang=python]{
 pk = io.mmread("K.mtx")
@@ -273,7 +285,7 @@ plt.show(block=True)
 それぞれの値で固有値がどのように変化するか確認してみましょう。)
 
 //list[][疎行列の固有値と固有モードの計算][lang=python]{
-vals, vecs = eigsh(A=pk, M=pm, k=10, sigma=-0.0001, which="LA")
+omega2, vecs = eigsh(A=pk, M=pm, k=10, sigma=-0.0001, which="LA")
 //}
 
 固有値を確認すると @<em>{numpy} で計算した結果と一致します。
@@ -281,7 +293,7 @@ vals, vecs = eigsh(A=pk, M=pm, k=10, sigma=-0.0001, which="LA")
 
 
 //list[][固有値の確認][lang=python]{
-print(vals)
+print(omega2)
 //}
 
 //output[][出力結果]{
@@ -294,7 +306,7 @@ array([3.88741096e-14, 1.17108119e-13, 1.40025727e-13,
 1次固有振動数を計算します。
 
 //list[][1 次固有振動数の確認][lang=python]{
-f1 = np.sqrt(vals[6])/(2.0*np.pi)
+f1 = np.sqrt(omega2[6])/(2.0*np.pi)
 print(f1.real, "Hz")
 //}
 

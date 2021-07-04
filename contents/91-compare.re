@@ -20,9 +20,10 @@ $ @<userinput>{sudo apt-get install python3-getfem++}     @<balloon>{下線が�
 
 ==== @<em>{PyVista}のインストール
 
-以下のように、pipコマンドを入力すると@<em>{PyVista}をインストールすることができます。
-//terminal[][pipコマンドによるインストール]{
-$ @<userinput>{pip install pyvista}     @<balloon>{下線が引かれたコマンドだけを入力すること}
+以下のように、pip3コマンドを入力すると@<em>{PyVista}をインストールすることができます。
+//terminal[][pip3コマンドによるインストール]{
+$ @<userinput>{sudo apt-get install python3-pip}
+$ @<userinput>{pip3 install pyvista}
 //}
 
 == インポートの確認
@@ -30,7 +31,7 @@ $ @<userinput>{pip install pyvista}     @<balloon>{下線が引かれたコマ�
 @<em>{GetFEM} と @<em>{PyVista} をインストールしたら、次のようにインポートができるか確認しましょう。
 
 //terminal[][@<em>{GetFEM} と @<em>{PyVista} のインポートの確認]{
-$ @<userinput>{python}
+$ @<userinput>{python3}
 >>> import getfem as gf
 >>> import pyvista as pv
 //}
@@ -40,7 +41,7 @@ $ @<userinput>{python}
 こちらもインポートできるか確認しておきましょう。
 
 //terminal[][@<em>{numpy} と @<em>{scipy} のインポートの確認]{
-$ @<userinput>{python}
+$ @<userinput>{python3}
 >>> import numpy as np
 >>> import scipy as sp
 //}
